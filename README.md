@@ -1,5 +1,7 @@
 # Audiobook for Grandma
 
+This is a Raspberry Pi project for my blind grandmother, so that she can have an easy access to audiobooks online. 
+
 ## Ideas
 
 ### Interface
@@ -37,3 +39,28 @@ Possible storage : https://86.243.32.119
 Machine learning algorithm that propose interresting books. 
 
 Or use an existing algorithm like KOBO algorithm. 
+
+
+### Dev
+
+#### Installation
+
+In Git Bash, or Bash in Linux : 
+
+```bash
+make env
+```
+
+#### Run dev
+
+```bash
+make develop
+```
+
+#### Upload
+
+```bash
+make pip-local
+```
+
+

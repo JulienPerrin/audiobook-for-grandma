@@ -1,0 +1,12 @@
+out/mp3/*
+!out/mp3/.gitkeep
+out/txt/*
+!out/txt/.gitkeep
+venv
+build/
+dist/
+audiobook_for_grandma.egg-info/
+*/__pycache__/*
+*.pic
+out/gutenberg/
+*.log
