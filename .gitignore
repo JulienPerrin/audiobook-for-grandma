@@ -7,6 +7,6 @@ build/
 dist/
 audiobook_for_grandma.egg-info/
 */__pycache__/*
-*.pic
+*.pyc
 out/gutenberg/
 *.log

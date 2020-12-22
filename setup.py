@@ -13,10 +13,10 @@ setup(
 
     url='https://github.com/JulienPerrin/audiobook-for-grandma',
 
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-    ),
+    ],
 
 
     packages=find_packages(exclude=['test*', 'Test*']),
@@ -26,7 +26,7 @@ setup(
         'audiobook-for-grandma': ['config.yaml']
       },
 
-    licence='MIT License',
+    license='MIT License',
 
     scripts=['main.py'],
 

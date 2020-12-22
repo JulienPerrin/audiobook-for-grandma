@@ -1,2 +1,2 @@
-make develop
-audiobook-for-grandma --test
+make develop > make.log
+audiobook-for-grandma #--test

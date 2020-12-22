@@ -45,6 +45,12 @@ Or use an existing algorithm like KOBO algorithm.
 
 #### Installation
 
+On Linux, you additionally need to install espeak , ffmpeg and libespeak1 as shown below: : 
+
+```bash
+sudo apt update && sudo apt install espeak ffmpeg libespeak1
+```
+
 In Git Bash, or Bash in Linux : 
 
 ```bash

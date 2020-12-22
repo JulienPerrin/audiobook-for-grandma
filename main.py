@@ -7,13 +7,14 @@ import sys
 from src import project_root
 from src.Library import Library
 
+
 def parse_input_args(argv):
     ''' Parses command line arguments '''
 
     parser = argparse.ArgumentParser(
         description="Description of the app that will be displayed when the script is executed.")
-    parser.add_argument('--test', help="Test the app.", dest="test",
-                        action='store_true', required=False)
+    parser.add_argument('--test', help="Test the app.",
+                        dest="test", action='store_true', required=False)
     return parser.parse_args()
 
 

@@ -5,6 +5,7 @@ import yaml
 from .BookFinder import BookFinder
 from .BookReader import BookReader
 
+from .model import Book
 
 class Library():
     finder: BookFinder
@@ -20,7 +21,9 @@ class Library():
         logging.config.dictConfig(self.config['logging'])
 
     def run(self):
-        self.reader.readText(self.finder.findBook())
+        # self.reader.readText(self.finder.findBook())
+        self.reader.book = self.finder.findBook()
+        self.reader.readBook() 
 
     @property
     def config(self):

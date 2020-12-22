@@ -37,10 +37,10 @@ logging:
         file:
             class : logging.FileHandler
             formatter: preciseFormatter
-            level: DEBUG
+            level: ERROR
             ## Note that file does not have to exist, but the directories (in case of full path name) should
             filename: reference_data_manager.log
 
     root:
-        level: DEBUG
+        level: ERROR
         handlers: [console, file]
