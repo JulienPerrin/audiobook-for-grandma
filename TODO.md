@@ -17,7 +17,7 @@
     - [ ] base first suggestions on the number of downloads
     - [ ] take into account what the user likes and dislikes 
   - [ ] save skipped books and do not suggest them again
-- [ ] add a command to download all the database for it to work offline
+- [ ] add a command to download all the database in a certain language for it to work offline
 
 ## Nice additional fonctionalities
 
