@@ -6,9 +6,9 @@
 
 root_folder: "/src"
 
-some_attribute:
-    A: "A"
-    B:  "B"
+test_language:
+    fr: "Ce livre est \u00e9crit en fran\u00E7ais. "
+    en: "This book is written in English. "
 
 
 ######################################################

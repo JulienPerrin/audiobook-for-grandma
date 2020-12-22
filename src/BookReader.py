@@ -30,8 +30,8 @@ class BookReader():
         self.engine.runAndWait()
 
     def readBook(self) -> ():
-        skip = 150
-        nbToRead = 2
+        skip = 6999
+        nbToRead = 0
 
         self.text = ''
         print("path to file to read: ", self.book.pathOfFileToRead)
@@ -58,6 +58,7 @@ class BookReader():
                     break
         self.read()
 
-    def __init__(self):
+    def __init__(self, languageTest = ''):
         self.text = ''
         self.engine = pyttsx3.init()
+        self.engine.say(languageTest)

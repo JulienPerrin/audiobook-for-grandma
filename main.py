@@ -12,9 +12,11 @@ def parse_input_args(argv):
     ''' Parses command line arguments '''
 
     parser = argparse.ArgumentParser(
-        description="Description of the app that will be displayed when the script is executed.")
+        description='''This app is made to allow old people to have an easy access to books of the Gutenberg library. 
+        It is especially made for people with sight disabilities. ''')
     parser.add_argument('--test', help="Test the app.",
                         dest="test", action='store_true', required=False)
+    parser.add_argument('--language', choices=['fr', 'en'], help="set the language of the books that are read")
     return parser.parse_args()
 
 
@@ -24,7 +26,7 @@ def execute_script(input_args):
 
     if parsed_args.test:
         print("Testing the app.")
-        classObject = Library(config_file)
+        classObject = Library(config_file, parsed_args.language)
         classObject.run()
 
 

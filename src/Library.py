@@ -10,12 +10,13 @@ from .model import Book
 class Library():
     finder: BookFinder
     reader: BookReader
-
-    def __init__(self, config_file):
+    
+    def __init__(self, config_file, language):
 
         self.config = self.load_config(config_file)
         self.finder = BookFinder()
-        self.reader = BookReader()
+        test = self.config['test_language']
+        self.reader = BookReader(test[language])
 
         # DO this once, in the top level class.
         logging.config.dictConfig(self.config['logging'])
