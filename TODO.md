@@ -1,6 +1,8 @@
 # TODO
 
-## Minimum viable product
+## On this project
+
+### Minimum viable product
 
 - [x] télécharger un livre
 - [x] lire un livre
@@ -19,10 +21,18 @@
   - [ ] save skipped books and do not suggest them again
 - [ ] add a command to download all the database in a certain language for it to work offline
 
-## Nice additional fonctionalities
+### Nice additional fonctionalities
 
 - [ ] read the book without using the lazy method of iterating on all the lines
   - [ ] correctly manage unicode files
 - [ ] add a command to save book into favorites
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped
+
+## Rasperry Pi interface
+
+- [ ] code a script  so that when a button connected to the raspberry is pushed, a command is executed on this project
+- [ ] how to connect electrical components to the Raspberry Pi so that my grandma can push them 
+  - [ ] or use bluetooth
+- [ ] write tutorial on how I did it
+
