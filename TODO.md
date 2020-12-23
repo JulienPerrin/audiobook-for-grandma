@@ -28,6 +28,7 @@
 - [ ] add a command to save book into favorites
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped
+- [ ] add a command to go faster/slower
 
 ## Rasperry Pi interface
 

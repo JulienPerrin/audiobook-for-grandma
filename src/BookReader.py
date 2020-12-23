@@ -12,10 +12,12 @@ from .model.Bookmark import Bookmark
 import pyttsx3
 from pyttsx3 import engine
 
+
 class BookReader():
     book: Book
     text: str
     engine: engine.Engine
+    continueReading: bool
 
     def readText(self, text: str) -> ():
         self.text = text
@@ -31,7 +33,7 @@ class BookReader():
 
     def readBook(self) -> ():
         skip = 6999
-        nbToRead = 0
+        nbToRead = 1
 
         self.text = ''
         print("path to file to read: ", self.book.pathOfFileToRead)
@@ -42,7 +44,7 @@ class BookReader():
                     continue
                 else:
                     break
-            #skip 150 line to avoid english text
+            # skip 150 line to avoid english text
             while skip > 0:
                 skip -= 1
                 bookFile.readline()
@@ -58,7 +60,17 @@ class BookReader():
                     break
         self.read()
 
-    def __init__(self, languageTest = ''):
+    def stopReading(self):
+        self.continueReading = False
+
+    def onWord(self, name, location, length):
+        print('word', name, location, length)
+        if not self.continueReading:
+            self.engine.stop()
+
+    def __init__(self, languageTest=''):
         self.text = ''
+        self.continueReading = True
         self.engine = pyttsx3.init()
-        self.engine.say(languageTest)
+        self.engine.connect('started-word', self.onWord)
+        self.engine.setProperty('rate', 200)

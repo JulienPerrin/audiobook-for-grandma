@@ -26,6 +26,9 @@ class Library():
         self.reader.book = self.finder.findBook()
         self.reader.readBook() 
 
+    def stopReading(self):
+        self.stopReading()
+        
     @property
     def config(self):
         return self._config

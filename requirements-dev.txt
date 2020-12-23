@@ -2,8 +2,8 @@ PyYAML==4.2b1
 gTTS
 wget
 pytest
-# python-vlc
 playsound
 internetarchive
 linecache-light 
 pyttsx3
+keyboard
