@@ -1,33 +1,35 @@
 import logging.config
 import os
+
 import yaml
 
 from .BookFinder import BookFinder
 from .BookReader import BookReader
-
+from .DB import DB
 from .model import Book
+
 
 class Library():
     finder: BookFinder
     reader: BookReader
-    
-    def __init__(self, config_file, language):
 
-        self.config = self.load_config(config_file)
+    db: DB
+    
+    def __init__(self, configFile, rate, language='en'):
+
+        self.config = self.load_config(configFile)
         self.finder = BookFinder()
         test = self.config['test_language']
-        self.reader = BookReader(test[language])
+        self.db = DB()
+        self.reader = BookReader(db=self.db, languageTest=test[language], rate=rate)
+
 
         # DO this once, in the top level class.
         logging.config.dictConfig(self.config['logging'])
 
     def run(self):
-        # self.reader.readText(self.finder.findBook())
         self.reader.book = self.finder.findBook()
         self.reader.readBook() 
-
-    def stopReading(self):
-        self.stopReading()
         
     @property
     def config(self):

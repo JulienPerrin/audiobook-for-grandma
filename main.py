@@ -7,6 +7,8 @@ import sys
 from src import project_root
 from src.Library import Library
 
+from src.DB import DB
+
 
 def parse_input_args(argv):
     ''' Parses command line arguments '''
@@ -17,7 +19,9 @@ def parse_input_args(argv):
     parser.add_argument('--test', help="Test the app.", action='store_true')
     parser.add_argument('--start', help="Start the app.", action='store_true')
     parser.add_argument('--stop', help="Stop the app.", action='store_true')
+    parser.add_argument('--skip', help="Stop the app.", action='store_true')
     parser.add_argument('--language', help="set the language of the books that are read", choices=['fr', 'en'], action='store')
+    parser.add_argument('--rate', help="the speed at which the text is read, 100 is normal, 300 is very fast", action='store')
     return parser.parse_args()
 
 
@@ -25,19 +29,16 @@ def execute_script(input_args):
     config_file = "{}/config.yaml".format(project_root.path())
     parsed_args = parse_input_args(input_args)
 
-    library = Library(config_file, parsed_args.language)
-
     if parsed_args.start or parsed_args.test:
         print("Starting the app.")
-        library = Library(config_file, parsed_args.language)
+        library = Library(configFile=config_file, language=parsed_args.language, rate=parsed_args.rate)
         library.run()
 
     if parsed_args.stop:
-        if not library:
-            raise ValueError('The app has not started. ')
         print("Stopping the app.")
-        library.stopReading()
-
+        db = DB()
+        db.updateContinueReading(False)
+        print("Reader will continue running : {}".format(bool(db.isContinueReading())))
 
 def main():
     # Entry point to the app. Call in test method

@@ -10,3 +10,4 @@ audiobook_for_grandma.egg-info/
 *.pyc
 out/gutenberg/
 *.log
+*.db

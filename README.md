@@ -41,9 +41,9 @@ Machine learning algorithm that propose interresting books.
 Or use an existing algorithm like KOBO algorithm. 
 
 
-### Dev
+## Dev
 
-#### Installation
+### Installation
 
 On Linux, you additionally need to install espeak , ffmpeg and libespeak1 as shown below: : 
 
@@ -57,13 +57,13 @@ In Git Bash, or Bash in Linux :
 make env
 ```
 
-#### Run dev
+### Run dev
 
 ```bash
 make develop
 ```
 
-#### Upload
+### Upload
 
 ```bash
 make pip-local

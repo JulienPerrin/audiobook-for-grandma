@@ -3,25 +3,31 @@ from os import listdir
 from os.path import isfile, join
 
 import playsound
+import pyttsx3
 import yaml
 from gtts import gTTS
+from pyttsx3 import engine
 
+from .DB import DB
 from .model.Book import Book
 from .model.Bookmark import Bookmark
-
-import pyttsx3
-from pyttsx3 import engine
 
 
 class BookReader():
     book: Book
     text: str
     engine: engine.Engine
-    continueReading: bool
+    db: DB
 
-    def readText(self, text: str) -> ():
-        self.text = text
-        self.read()
+    def __init__(self, db, languageTest='', rate=150):
+        self.text = ''
+        self.db = db
+        self.engine = pyttsx3.init()
+        self.engine.connect('started-word', self.onWord)
+        if rate:
+            self.engine.setProperty('rate', rate)
+        if languageTest:
+            self.engine.say(languageTest)
 
     def read(self) -> ():
         # tts = gTTS(text=self.text, lang="fr")
@@ -32,45 +38,62 @@ class BookReader():
         self.engine.runAndWait()
 
     def readBook(self) -> ():
-        skip = 6999
-        nbToRead = 1
+        # skip = 6999
+        # nbToRead = 300
 
         self.text = ''
         print("path to file to read: ", self.book.pathOfFileToRead)
+        hasGutenbergIntro = False
         with open(self.book.pathOfFileToRead) as bookFile:
+            uselessLineIndex = 500
             while 1:
                 uselessLine = bookFile.readline()
                 if uselessLine and not uselessLine.startswith('*** START OF THIS PROJECT GUTENBERG'):
-                    continue
-                else:
+                    hasGutenbergIntro = True
+                uselessLineIndex += 1
+                if (uselessLineIndex > 500):
                     break
-            # skip 150 line to avoid english text
-            while skip > 0:
-                skip -= 1
-                bookFile.readline()
-            while 1:
-                # for now, read the firts 10 lines of this book
+        with open(self.book.pathOfFileToRead) as bookFile:
+            if hasGutenbergIntro:
+                while 1:
+                    uselessLine = bookFile.readline()
+                    if uselessLine and not uselessLine.startswith('*** START OF THIS PROJECT GUTENBERG'):
+                        continue
+                    else:
+                        break
+            while self.db.isContinueReading():
                 line = bookFile.readline().strip() + ' '
                 if not line.strip():
-                    # if the line is blank, skip
                     continue
-                self.text += line
-                print("line ", self.book.bookmark.nextLine(), ": ", line)
-                if self.book.bookmark.lastLineRead > nbToRead:
-                    break
+                sentenceChunks = line.split('.')
+                i = 0
+                for sentenceChunk in sentenceChunks:
+                    if i==0 and len(sentenceChunks)>1:
+                        # the begining of the sentence is on the previous line, the end is on this line
+                        self.text += '{}. '.format(sentenceChunk)
+                        self.read()
+                        print("finished sentence: {}".format(self.text))
+                    elif i==0:
+                        # the begining of the sentence is on the previous line
+                        self.text += '{} '.format(sentenceChunk)
+                        print("updated sentence: {}".format(self.text))
+                    elif i<len(sentenceChunks)-1:
+                        # the entire sentence is on this line
+                        self.text = '{}. '.format(sentenceChunk)
+                        self.read()
+                        print("sentence: {}".format(self.text))
+                    else:
+                        self.text = '{} '.format(sentenceChunk)
+                        print("beginned sentence: {}".format(self.text))
+                        # the end of the sentence is on the next line
+                    i+=1
+                # print("line {}: {}".format(self.book.bookmark.nextLine(), line))
+                # if self.book.bookmark.lastLineRead > nbToRead:
+                #     break
         self.read()
 
-    def stopReading(self):
-        self.continueReading = False
-
     def onWord(self, name, location, length):
-        print('word', name, location, length)
-        if not self.continueReading:
+        # print('word', name, location, length)
+        if not self.db.isContinueReading():
             self.engine.stop()
 
-    def __init__(self, languageTest=''):
-        self.text = ''
-        self.continueReading = True
-        self.engine = pyttsx3.init()
-        self.engine.connect('started-word', self.onWord)
-        self.engine.setProperty('rate', 200)

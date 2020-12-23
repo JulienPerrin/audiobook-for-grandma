@@ -9,7 +9,7 @@
 - [x] sauter le début inutile du livre
   - [x] skip until *** START OF THE GUTEMBERG PROJECT
 - [x] choose the languages of the books to read
-- [ ] add a command to stop the readings, and another to resume the reading
+- [x] add a command to stop the readings, and another to resume the reading
   - [ ] add the bookmark fonctionality
     - [ ] save bookmark on external file
     - [ ] when the app is stoped and restarted, start to read on bookmark
@@ -17,7 +17,7 @@
   - [ ] get all the list of books
   - [ ] suggestion algorithm for books
     - [ ] base first suggestions on the number of downloads
-    - [ ] take into account what the user likes and dislikes 
+    - [ ] base suggestions on the percetage of the books read and their genre and authors
   - [ ] save skipped books and do not suggest them again
 - [ ] add a command to download all the database in a certain language for it to work offline
 

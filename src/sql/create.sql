@@ -10,3 +10,13 @@ CREATE TABLE IF NOT EXISTS BOOK(
     publisher,
     volume
 );
+
+CREATE TABLE IF NOT EXISTS BOOKMARK(
+    identifier,
+    line_number
+);
+
+CREATE TABLE IF NOT EXISTS CONTINUE_READING(
+    CONTINUE_READING,
+    LAST_UPDATE
+);
