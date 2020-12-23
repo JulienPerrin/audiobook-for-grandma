@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "afg",
+            "database": "${workspaceFolder:audiobook-for-grandma}/afg.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}

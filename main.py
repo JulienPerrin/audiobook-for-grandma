@@ -31,13 +31,15 @@ def execute_script(input_args):
 
     if parsed_args.start or parsed_args.test:
         print("Starting the app.")
+        print("language:", parsed_args.language)
+        print("rate:", parsed_args.rate)
         library = Library(configFile=config_file, language=parsed_args.language, rate=parsed_args.rate)
         library.run()
 
     if parsed_args.stop:
         print("Stopping the app.")
         db = DB()
-        db.updateContinueReading(False)
+        db.updateContinueReading(False, db.lastBook())
         print("Reader will continue running : {}".format(bool(db.isContinueReading())))
 
 def main():

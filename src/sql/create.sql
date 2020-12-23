@@ -1,22 +1,23 @@
 CREATE TABLE IF NOT EXISTS BOOK(
-    identifier,
-    format,
-    name,
-    title,
-    creator,
-    genre,
-    downloads,
-    publicdate,
-    publisher,
-    volume
+    IDENTIFIER,
+    FORMAT,
+    NAME,
+    TITLE,
+    CREATOR,
+    GENRE,
+    DOWNLOADS,
+    PUBLICDATE,
+    PUBLISHER,
+    VOLUME
 );
 
 CREATE TABLE IF NOT EXISTS BOOKMARK(
-    identifier,
-    line_number
+    IDENTIFIER,
+    LINE_NUMBER
 );
 
 CREATE TABLE IF NOT EXISTS CONTINUE_READING(
     CONTINUE_READING,
-    LAST_UPDATE
-);
+    LAST_UPDATE, 
+    IDENTIFIER
+); 

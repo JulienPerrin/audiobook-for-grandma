@@ -10,9 +10,9 @@
   - [x] skip until *** START OF THE GUTEMBERG PROJECT
 - [x] choose the languages of the books to read
 - [x] add a command to stop the readings, and another to resume the reading
-  - [ ] add the bookmark fonctionality
-    - [ ] save bookmark on external file
-    - [ ] when the app is stoped and restarted, start to read on bookmark
+  - [x] add the bookmark fonctionality
+    - [x] save bookmark on DB
+    - [x] when the app is stoped and restarted, start 5 lines before bookmark
 - [ ] add a command to skip to the next book
   - [ ] get all the list of books
   - [ ] suggestion algorithm for books

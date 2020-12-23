@@ -3,6 +3,7 @@ env:
 	source venv/bin/activate
 
 develop:
+	python setup.py sdist bdist_wheel
 	python setup.py develop
 	pip install -r requirements-dev.txt
 
