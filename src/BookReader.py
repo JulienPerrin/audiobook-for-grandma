@@ -18,14 +18,22 @@ class BookReader():
     text: str
     engine: engine.Engine
     db: DB
+    rate: int
+    volume: float
 
-    def __init__(self, db, languageTest='', rate=150):
+    def __init__(self, db, languageTest='', rate: int = 150, volume=0.5):
         self.text = ''
         self.db = db
         self.engine = pyttsx3.init()
-        self.engine.connect('started-word', self.onWord)
+        self.rate = rate
+        self.volume = volume
+        print("engine voices", [(voice.name, voice.id)
+                                for voice in self.engine.getProperty('voices')])
         if rate:
-            self.engine.setProperty('rate', rate)
+            self.engine.setProperty('rate', int(self.rate))
+        if volume:
+            self.engine.setProperty('volume', float(self.volume))
+        self.engine.connect('started-word', self.onWord)
         if languageTest:
             self.engine.say(languageTest)
 
@@ -62,7 +70,7 @@ class BookReader():
                     bookFile.readline()
                 lineNumber = max(0, lineNumber-4)
             # read the book
-            while self.db.isContinueReading():
+            while self.db.isContinueReading() and not self.db.isSkipped(self.book.identifier):
                 line = bookFile.readline().strip() + ' '
                 lineNumber += 1
                 # print("line {}: {}".format(lineNumber, line))
@@ -94,10 +102,8 @@ class BookReader():
                             self.text = '{} '.format(textStripped)
                             # print("beginned sentence: {}".format(self.text))
                     i += 1
-            self.read()
 
     def onWord(self, name, location, length):
-        # print('word', name, location, length)
         if not self.db.isContinueReading():
             self.engine.stop()
 

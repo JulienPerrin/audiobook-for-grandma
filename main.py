@@ -21,7 +21,8 @@ def parse_input_args(argv):
     parser.add_argument('--stop', help="Stop the app.", action='store_true')
     parser.add_argument('--skip', help="Stop the app.", action='store_true')
     parser.add_argument('--language', help="set the language of the books that are read", choices=['fr', 'en'], action='store')
-    parser.add_argument('--rate', help="the speed at which the text is read, 100 is normal, 300 is very fast", action='store')
+    parser.add_argument('--rate', help="the number of words per minute", action='store')
+    parser.add_argument('--volume', help="the volume between 0.0 and 1.0", action='store')
     return parser.parse_args()
 
 
@@ -33,7 +34,8 @@ def execute_script(input_args):
         print("Starting the app.")
         print("language:", parsed_args.language)
         print("rate:", parsed_args.rate)
-        library = Library(configFile=config_file, language=parsed_args.language, rate=parsed_args.rate)
+        print("volume:", parsed_args.volume)
+        library = Library(configFile=config_file, language=parsed_args.language, rate=parsed_args.rate, volume=parsed_args.volume)
         library.run()
 
     if parsed_args.stop:
@@ -41,6 +43,10 @@ def execute_script(input_args):
         db = DB()
         db.updateContinueReading(False, db.lastBook())
         print("Reader will continue running : {}".format(bool(db.isContinueReading())))
+
+    if parsed_args.skip:
+        db = DB()
+        db.skip()
 
 def main():
     # Entry point to the app. Call in test method

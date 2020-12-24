@@ -51,9 +51,9 @@ class DB():
             self.cursor.execute(
                 "UPDATE BOOKMARK SET line_number=? WHERE identifier = ?", (lastLineRead, identifier))
         else:
-            print("INSERT BOOKMARK: {} {}".format(identifier, lastLineRead))
+            print("INSERT BOOKMARK: {} {} {}".format(identifier, lastLineRead, False))
             self.cursor.execute(
-                "INSERT INTO BOOKMARK VALUES (?, ?)", (identifier, lastLineRead))
+                "INSERT INTO BOOKMARK VALUES (?, ?, ?)", (identifier, lastLineRead, False))
         self.connexion.commit()
 
     def getBookmark(self, identifier: str) -> int:
@@ -62,5 +62,18 @@ class DB():
         result = self.cursor.fetchone()
         if result is not None:
             return result[1]
+        else:
+            return None
+
+    def skip(self) -> ():
+        self.cursor.execute("UPDATE BOOKMARK SET SKIPPED=1 WHERE identifier = ?", (self.lastBook(),))
+        self.connexion.commit()
+
+    def isSkipped(self, identifier: str) -> bool:
+        self.cursor.execute(
+            "SELECT * FROM BOOKMARK WHERE identifier = ?", (identifier,))
+        result = self.cursor.fetchone()
+        if result is not None:
+            return result[2]
         else:
             return None

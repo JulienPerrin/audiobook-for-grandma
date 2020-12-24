@@ -29,7 +29,8 @@
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped
 - [ ] add a command to go faster/slower
-
+- [ ] reduce/increase volume
+- [ ] reduce/increase reading speed
 ## Rasperry Pi interface
 
 - [ ] code a script  so that when a button connected to the raspberry is pushed, a command is executed on this project

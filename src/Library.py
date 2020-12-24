@@ -15,20 +15,23 @@ class Library():
 
     db: DB
 
-    def __init__(self, configFile, rate, language='en'):
+    def __init__(self, configFile, rate: int, volume: float, language='en'):
 
         self.config = self.load_config(configFile)
-        self.finder = BookFinder()
-        test = self.config['test_language']
         self.db = DB()
+        self.finder = BookFinder(self.db)
+        test = self.config['test_language']
         self.reader = BookReader(
-            db=self.db, languageTest=test[language], rate=rate)
+            db=self.db, languageTest=test[language], rate=rate, volume=volume)
 
         # DO this once, in the top level class.
         logging.config.dictConfig(self.config['logging'])
 
     def run(self):
-        self.reader.readBook(self.finder.findBook())
+        book = self.finder.findBook()
+        self.reader.readBook(book)
+        if self.db.isSkipped(book.identifier):
+            self.run()
 
     @property
     def config(self):
