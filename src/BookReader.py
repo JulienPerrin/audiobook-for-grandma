@@ -53,7 +53,10 @@ class BookReader():
 
         self.db.updateContinueReading(True, self.book.identifier)
         lineNumber = self.db.getBookmark(self.book.identifier)
+        numberOfLines = None
         if lineNumber is None:
+            with open(self.book.pathOfFileToRead) as bookFileWithLinesToCount:
+                numberOfLines = sum([1 for i in bookFileWithLinesToCount])
             lineNumber = 0
         with open(self.book.pathOfFileToRead) as bookFile:
             # if the gutenberg intro is at the beginning of the file, then remove it if we have not already started reading the book
@@ -70,8 +73,11 @@ class BookReader():
                     bookFile.readline()
                 lineNumber = max(0, lineNumber-4)
             # read the book
-            while self.db.isContinueReading() and not self.db.isSkipped(self.book.identifier):
-                line = bookFile.readline().strip() + ' '
+            while self.db.isContinueReading() and not self.db.isSkipped(self.book.identifier) and not self.db.isFinished(self.book.identifier):
+                fullLine = bookFile.readline()
+                if not fullLine:
+                    self.db.markFinished()
+                line = fullLine.strip() + ' '
                 lineNumber += 1
                 # print("line {}: {}".format(lineNumber, line))
                 if not line.strip():
@@ -86,7 +92,7 @@ class BookReader():
                             self.text += '{}. '.format(textStripped)
                             print("finished sentence: {}".format(self.text))
                             self.db.updateBookmark(
-                                identifier=self.book.identifier, lastLineRead=lineNumber)
+                                identifier=self.book.identifier, lastLineRead=lineNumber, numberOfLines=numberOfLines)
                             self.read()
                         elif i == 0:
                             # the begining of the sentence is on the previous line

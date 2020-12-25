@@ -13,12 +13,12 @@
   - [x] add the bookmark fonctionality
     - [x] save bookmark on DB
     - [x] when the app is stoped and restarted, start 5 lines before bookmark
-- [ ] add a command to skip to the next book
-  - [ ] get all the list of books
+- [x] add a command to skip to the next book
+  - [x] get all the list of books
   - [ ] suggestion algorithm for books
     - [ ] base first suggestions on the number of downloads
     - [ ] base suggestions on the percetage of the books read and their genre and authors
-  - [ ] save skipped books and do not suggest them again
+  - [x] save skipped books and do not suggest them again
 - [ ] add a command to download all the database in a certain language for it to work offline
 
 ### Nice additional fonctionalities

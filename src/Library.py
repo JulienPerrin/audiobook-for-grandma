@@ -30,7 +30,7 @@ class Library():
     def run(self):
         book = self.finder.findBook()
         self.reader.readBook(book)
-        if self.db.isSkipped(book.identifier):
+        if self.db.isSkipped(book.identifier) or self.db.isFinished(book.identifier):
             self.run()
 
     @property

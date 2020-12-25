@@ -4,10 +4,11 @@ Instantiate all your classes here.
 '''
 import argparse
 import sys
-from src import project_root
-from src.Library import Library
 
+from src import project_root
 from src.DB import DB
+from src.Library import Library
+from src.model.Book import Book
 
 
 def parse_input_args(argv):
@@ -20,9 +21,12 @@ def parse_input_args(argv):
     parser.add_argument('--start', help="Start the app.", action='store_true')
     parser.add_argument('--stop', help="Stop the app.", action='store_true')
     parser.add_argument('--skip', help="Stop the app.", action='store_true')
-    parser.add_argument('--language', help="set the language of the books that are read", choices=['fr', 'en'], action='store')
-    parser.add_argument('--rate', help="the number of words per minute", action='store')
-    parser.add_argument('--volume', help="the volume between 0.0 and 1.0", action='store')
+    parser.add_argument('--language', help="set the language of the books that are read",
+                        choices=['fr', 'en'], action='store')
+    parser.add_argument(
+        '--rate', help="the number of words per minute", action='store')
+    parser.add_argument(
+        '--volume', help="the volume between 0.0 and 1.0", action='store')
     return parser.parse_args()
 
 
@@ -30,23 +34,33 @@ def execute_script(input_args):
     config_file = "{}/config.yaml".format(project_root.path())
     parsed_args = parse_input_args(input_args)
 
+    if parsed_args.test:
+        db = DB()
+        db.test()
+        
     if parsed_args.start or parsed_args.test:
         print("Starting the app.")
         print("language:", parsed_args.language)
         print("rate:", parsed_args.rate)
         print("volume:", parsed_args.volume)
-        library = Library(configFile=config_file, language=parsed_args.language, rate=parsed_args.rate, volume=parsed_args.volume)
+        library = Library(configFile=config_file, language=parsed_args.language,
+                          rate=parsed_args.rate, volume=parsed_args.volume)
         library.run()
 
     if parsed_args.stop:
         print("Stopping the app.")
         db = DB()
-        db.updateContinueReading(False, db.lastBook())
-        print("Reader will continue running : {}".format(bool(db.isContinueReading())))
+        lastBook: Book = db.lastBook()
+        if lastBook is None:
+            raise ValueError("Impossible to stop as books where never read")
+        db.updateContinueReading(False, db.lastBook().identifier)
+        print("Reader will continue running : {}".format(
+            bool(db.isContinueReading())))
 
     if parsed_args.skip:
         db = DB()
         db.skip()
+
 
 def main():
     # Entry point to the app. Call in test method
