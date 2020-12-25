@@ -34,10 +34,11 @@
 - [ ] add a command to go faster/slower
 - [ ] reduce/increase volume
 - [ ] reduce/increase reading speed
+
 ## Rasperry Pi interface
 
 - [ ] code a script  so that when a button connected to the raspberry is pushed, a command is executed on this project
-- [ ] how to connect electrical components to the Raspberry Pi so that my grandma can push them 
+- [ ] how to connect buttons to the Raspberry Pi so that my grandma can push them 
   - [ ] or use bluetooth
 - [ ] write tutorial on how I did it
 
