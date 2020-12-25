@@ -1,2 +1,2 @@
 make develop > make.log
-audiobook-for-grandma --test --language fr --rate 450 --volume 0.1
+audiobook-for-grandma --test --language fr --rate 300 --volume 0.1

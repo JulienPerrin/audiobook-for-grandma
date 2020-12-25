@@ -29,8 +29,9 @@ class Library():
 
     def run(self):
         book = self.finder.findBook()
+        print("path of file to read:", book.pathOfFileToRead)
         self.reader.readBook(book)
-        if self.db.isSkipped(book.identifier) or self.db.isFinished(book.identifier):
+        if self.db.isContinueReading():
             self.run()
 
     @property

@@ -43,6 +43,8 @@ def execute_script(input_args):
         print("language:", parsed_args.language)
         print("rate:", parsed_args.rate)
         print("volume:", parsed_args.volume)
+        if parsed_args.language is None:
+            raise ValueError("Language is mandatory with value error")
         library = Library(configFile=config_file, language=parsed_args.language,
                           rate=parsed_args.rate, volume=parsed_args.volume)
         library.run()

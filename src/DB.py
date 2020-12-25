@@ -10,7 +10,9 @@ from .model.Book import Book
 class DB():
     tableName = "afg.db"
     createFilePath = join(os.path.dirname(__file__), 'sql', 'create.sql')
+    dropFilePath = join(os.path.dirname(__file__), 'sql', 'drop.sql')
     testFilePath = join(os.path.dirname(__file__), 'sql', 'insert_test.sql')
+    findNextBookFilePath = join(os.path.dirname(__file__), 'sql', 'find_next_book.sql')
 
     def __init__(self):
         try:
@@ -24,6 +26,10 @@ class DB():
             print("Error while connecting to sqlite", error)
 
     def test(self):
+        with open(self.dropFilePath) as dropFile:
+            self.cursor.executescript(dropFile.read())
+        with open(self.createFilePath) as createFile:
+            self.cursor.executescript(createFile.read())
         with open(self.testFilePath) as testFile:
             self.cursor.executescript(testFile.read())
         self.connexion.commit()
@@ -39,51 +45,59 @@ class DB():
         )
         self.cursor.executemany("""
             INSERT INTO BOOK 
-            (IDENTIFIER,FORMAT,NAME,TITLE,CREATOR,GENRE,DOWNLOADS,PUBLICDATE,PUBLISHER,VOLUME)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (IDENTIFIER,TITLE,CREATOR,DOWNLOADS,PUBLISHER,VOLUME,ENCODING)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
                             [
                                 (
-                                    book.identifier,
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                    ''
+                                    str(book.identifier),
+                                    str(book.title),
+                                    str(book.creator),
+                                    int(book.downloads),
+                                    str(book.publisher),
+                                    str(book.volume),
+                                    None,
                                 ) for book in books
                             ]
                             )
         self.connexion.commit()
 
     def isBookListDownloaded(self):
-        self.cursor.execute("SELECT 1 FROM BOOK")
-        return self.cursor.fetchone() is not None
+        self.cursor.execute("SELECT COUNT(*) FROM BOOK")
+        count = self.cursor.fetchone()
+        return count is not None and count[0] > 100
 
-    def findNextBook(self) -> str:
-        self.cursor.execute("""
-        SELECT book.IDENTIFIER FROM BOOK book
-        LEFT JOIN BOOKMARK bookmark ON bookmark.IDENTIFIER = book.IDENTIFIER
-        WHERE (bookmark.SKIPPED IS NULL OR bookmark.SKIPPED = 0)
-        AND (bookmark.FINISHED IS NULL OR bookmark.FINISHED = 0)
-        ORDER BY book.DOWNLOADS DESC, book.IDENTIFIER ASC
-        """)
-        result = self.cursor.fetchone()[0]
-        if result is None:
-            raise ValueError('No new books to read')
-        else:
-            return result
+    def updateEncoding(self, identifier: str, encoding: str) -> ():
+        self.cursor.execute("UPDATE BOOK SET ENCODING = ? WHERE IDENTIFIER = ?", (encoding, identifier))
+        self.connexion.commit()
+
+    def findNextBook(self) -> Book:
+        with open(self.findNextBookFilePath) as findNextBookFile:
+            self.cursor.execute(findNextBookFile.read())
+        return self.fetchBook()
 
     def lastBook(self) -> Book:
-        self.cursor.execute("SELECT identifier FROM CONTINUE_READING")
+        self.cursor.execute("""
+        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING
+        FROM CONTINUE_READING cr 
+        JOIN BOOK book ON BOOK.IDENTIFIER = cr.IDENTIFIER
+        """)
+        return self.fetchBook()
+
+    def fetchBook(self) -> Book:
         result = self.cursor.fetchone()
         if result is None:
             return None
         else:
-            return Book(result[0])
+            return Book(
+                identifier = result[0],
+                title = result[1],
+                creator= result[2],
+                downloads = result[3],
+                publisher = result[4],
+                volume = result[5],
+                encoding = result[6],
+            )
 
     def updateContinueReading(self, continueReading: bool, identifier):
         if not identifier or identifier is None:
@@ -98,14 +112,13 @@ class DB():
         self.cursor.execute("SELECT * FROM CONTINUE_READING")
         return self.cursor.fetchone()[0]
 
-    def updateBookmark(self, identifier: str, lastLineRead: int, numberOfLines: int):
+    def updateBookmark(self, identifier: str, lastLineRead: int, numberOfLines: int = None):
         if self.getBookmark(identifier) is not None:
             # print("UPDATE BOOKMARK: {} {}".format(identifier, lastLineRead))
             self.cursor.execute(
                 "UPDATE BOOKMARK SET line_number=? WHERE identifier = ?", (lastLineRead, identifier))
         else:
-            print("INSERT BOOKMARK: {} {} {}".format(
-                identifier, lastLineRead, False))
+            print("INSERT INTO BOOKMARK VALUES ({}, {}, {}, {}, {})".format(identifier, lastLineRead, numberOfLines, False, False))
             self.cursor.execute(
                 "INSERT INTO BOOKMARK VALUES (?, ?, ?, ?, ?)", (identifier, lastLineRead, numberOfLines, False, False))
         self.connexion.commit()

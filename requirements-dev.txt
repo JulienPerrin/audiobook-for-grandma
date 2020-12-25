@@ -1,9 +1,6 @@
 PyYAML==4.2b1
 gTTS
-wget
 pytest
-playsound
 internetarchive
-linecache-light 
 pyttsx3
-keyboard
+chardet
