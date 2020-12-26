@@ -42,7 +42,7 @@ class BookFinder():
                             downloads=item.get('downloads'),
                             publisher=item.get('publisher'),
                             volume=item.get('volume', None),
-                            # TODO: add item.get('subject', None),
+                            subjects=item.get('subject', []),
                         )
                         for item in items
                     ])

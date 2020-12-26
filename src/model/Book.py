@@ -11,8 +11,10 @@ class Book():
     volume: str
     pathOfFileToRead: str
     encoding: str
+    subjects: list[str]
 
-    def __init__(self, identifier: str, title: str, creator: str, downloads: str, publisher: str, volume: str, encoding: str = None):
+    def __init__(self, identifier: str, title: str, creator: str, downloads: str, publisher: str, 
+            volume: str, subjects: list[str] = [], encoding: str = None):
         self.identifier = identifier
         self.title = title
         self.creator = creator
@@ -20,6 +22,7 @@ class Book():
         self.publisher = publisher
         self.volume = volume
         self.encoding = encoding
+        self.subjects = subjects
         self.updatePathOfFileToRead()
         
     def updatePathOfFileToRead(self):

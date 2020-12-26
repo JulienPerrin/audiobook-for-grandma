@@ -12,7 +12,8 @@ class DB():
     createFilePath = join(os.path.dirname(__file__), 'sql', 'create.sql')
     dropFilePath = join(os.path.dirname(__file__), 'sql', 'drop.sql')
     testFilePath = join(os.path.dirname(__file__), 'sql', 'insert_test.sql')
-    findNextBookFilePath = join(os.path.dirname(__file__), 'sql', 'find_next_book.sql')
+    findNextBookFilePath = join(os.path.dirname(
+        __file__), 'sql', 'find_next_book.sql')
 
     def __init__(self):
         try:
@@ -43,23 +44,41 @@ class DB():
             "DELETE FROM BOOK WHERE identifier = ?",
             [(book.identifier,) for book in books]
         )
+        self.cursor.executemany(
+            "DELETE FROM SUBJECT WHERE identifier = ?",
+            [(book.identifier,) for book in books]
+        )
         self.cursor.executemany("""
             INSERT INTO BOOK 
             (IDENTIFIER,TITLE,CREATOR,DOWNLOADS,PUBLISHER,VOLUME,ENCODING)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-                            [
-                                (
-                                    str(book.identifier),
-                                    str(book.title),
-                                    str(book.creator),
-                                    int(book.downloads),
-                                    str(book.publisher),
-                                    str(book.volume),
-                                    None,
-                                ) for book in books
-                            ]
-                            )
+                                [
+                                    (
+                                        str(book.identifier),
+                                        str(book.title),
+                                        str(book.creator),
+                                        int(book.downloads),
+                                        str(book.publisher),
+                                        str(book.volume),
+                                        None,
+                                    ) for book in books
+                                ]
+                                )
+        self.cursor.executemany("""
+            INSERT INTO SUBJECT 
+            (IDENTIFIER,NAME)
+            SELECT ?, ? WHERE NOT EXISTS(SELECT 1 FROM SUBJECT s WHERE s.IDENTIFIER = ? AND s.NAME = ?)
+            """,
+                                [
+                                        (
+                                            str(book.identifier),
+                                            str(subject),
+                                            str(book.identifier),
+                                            str(subject),
+                                        ) for book in books for subject in book.subjects
+                                ]
+                                )
         self.connexion.commit()
 
     def isBookListDownloaded(self):
@@ -68,7 +87,8 @@ class DB():
         return count is not None and count[0] > 100
 
     def updateEncoding(self, identifier: str, encoding: str) -> ():
-        self.cursor.execute("UPDATE BOOK SET ENCODING = ? WHERE IDENTIFIER = ?", (encoding, identifier))
+        self.cursor.execute(
+            "UPDATE BOOK SET ENCODING = ? WHERE IDENTIFIER = ?", (encoding, identifier))
         self.connexion.commit()
 
     def findNextBook(self) -> Book:
@@ -90,13 +110,13 @@ class DB():
             return None
         else:
             return Book(
-                identifier = result[0],
-                title = result[1],
-                creator= result[2],
-                downloads = result[3],
-                publisher = result[4],
-                volume = result[5],
-                encoding = result[6],
+                identifier=result[0],
+                title=result[1],
+                creator=result[2],
+                downloads=result[3],
+                publisher=result[4],
+                volume=result[5],
+                encoding=result[6],
             )
 
     def updateContinueReading(self, continueReading: bool, identifier):
@@ -118,7 +138,8 @@ class DB():
             self.cursor.execute(
                 "UPDATE BOOKMARK SET line_number=? WHERE identifier = ?", (lastLineRead, identifier))
         else:
-            print("INSERT INTO BOOKMARK VALUES ({}, {}, {}, {}, {})".format(identifier, lastLineRead, numberOfLines, False, False))
+            print("INSERT INTO BOOKMARK VALUES ({}, {}, {}, {}, {})".format(
+                identifier, lastLineRead, numberOfLines, False, False))
             self.cursor.execute(
                 "INSERT INTO BOOKMARK VALUES (?, ?, ?, ?, ?)", (identifier, lastLineRead, numberOfLines, False, False))
         self.connexion.commit()
@@ -153,4 +174,3 @@ class DB():
             "SELECT FINISHED FROM BOOKMARK WHERE identifier = ?", (identifier,))
         result = self.cursor.fetchone()
         return result is not None and result[0]
-

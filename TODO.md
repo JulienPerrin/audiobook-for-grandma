@@ -6,7 +6,7 @@
 
 - [x] télécharger un livre
 - [x] lire un livre
-  - [ ] with the right encoding
+  - [x] with the right encoding
 - [x] sauter le début inutile du livre
   - [x] skip until *** START OF THE GUTEMBERG PROJECT
 - [x] choose the languages of the books to read
