@@ -1,6 +1,7 @@
 import os
 from os import listdir
 from os.path import isfile, join
+from datetime import datetime
 
 import requests
 from internetarchive import download
@@ -61,12 +62,13 @@ class BookFinder():
         if lastBook is not None and not self.db.isSkipped(lastBook.identifier) and not self.db.isFinished(lastBook.identifier):
             return lastBook
         else:
-            print("Let's find the next book!")
+            print(datetime.now(), "Let's find the next book!")
             nextBook = self.db.findNextBook()
             if nextBook is None:
                 raise ValueError("No more books to read")
+            print(datetime.now(), "Book found:", nextBook)
             download(nextBook.identifier, destdir=join('out', 'gutenberg'),
                      verbose=True, checksum=True, glob_pattern='*txt', ignore_existing=True)
             nextBook.updatePathOfFileToRead()
-            print('Book downloaded:', nextBook)
+            print(datetime.now(), 'Book downloaded:', nextBook)
             return nextBook
