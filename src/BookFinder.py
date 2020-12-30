@@ -44,6 +44,7 @@ class BookFinder():
                             publisher=item.get('publisher'),
                             volume=item.get('volume', None),
                             subjects=item.get('subject', []),
+                            downloaded=False,
                         )
                         for item in items
                     ])
@@ -67,8 +68,14 @@ class BookFinder():
             if nextBook is None:
                 raise ValueError("No more books to read")
             print(datetime.now(), "Book found:", nextBook)
-            download(nextBook.identifier, destdir=join('out', 'gutenberg'),
-                     verbose=True, checksum=True, glob_pattern='*txt', ignore_existing=True)
-            nextBook.updatePathOfFileToRead()
-            print(datetime.now(), 'Book downloaded:', nextBook)
+            if not nextBook.downloaded:
+                self.downloadBook(nextBook)
             return nextBook
+
+    def downloadBook(self, book: Book) -> ():
+        download(book.identifier, destdir=join('out', 'gutenberg'),
+                    verbose=True, checksum=True, glob_pattern='*txt', ignore_existing=True)
+        book.downloaded = True
+        self.db.markDownloaded(book)
+        book.updatePathOfFileToRead()
+        print(datetime.now(), 'Book downloaded:', book)

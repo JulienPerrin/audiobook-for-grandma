@@ -20,9 +20,9 @@
   - [x] suggestion algorithm for books
     - [x] base first suggestions on the number of downloads
     - [x] base suggestions on the percetage of the books read and their authors
-    - [ ] suggest based on book subject
+    - [x] suggest based on book subject
   - [x] save skipped books and do not suggest them again
-- [ ] add a command to download all the database in a certain language for it to work offline
+- [x] add a command to download all the database in a certain language for it to work offline
 
 ### Nice additional fonctionalities
 
@@ -39,6 +39,7 @@
 
 - [ ] code a script  so that when a button connected to the raspberry is pushed, a command is executed on this project
 - [ ] how to connect buttons to the Raspberry Pi so that my grandma can push them 
+  - [ ] W10 on Raspberry
   - [ ] or use bluetooth
 - [ ] write tutorial on how I did it
 

@@ -21,6 +21,7 @@ def parse_input_args(argv):
     parser.add_argument('--start', help="Start the app.", action='store_true')
     parser.add_argument('--stop', help="Stop the app.", action='store_true')
     parser.add_argument('--skip', help="Stop the app.", action='store_true')
+    parser.add_argument('--offline', help="Download all the books of the gutenberg library for the selected language, so that the app can work offline", action='store_true')
     parser.add_argument('--language', help="set the language of the books that are read",
                         choices=['fr', 'en'], action='store')
     parser.add_argument(
@@ -63,6 +64,15 @@ def execute_script(input_args):
         db = DB()
         db.skip()
 
+    if parsed_args.offline:
+        print("Downloading the books. ")
+        print("language:", parsed_args.language)
+        if parsed_args.language is None:
+            raise ValueError("Language is mandatory with value error")
+        library = Library(configFile=config_file, language=parsed_args.language,
+                          rate=parsed_args.rate, volume=parsed_args.volume)
+        library.downloadBooksForAppToWorkOffline()
+        print("All books have been downloaded. ")
 
 def main():
     # Entry point to the app. Call in test method

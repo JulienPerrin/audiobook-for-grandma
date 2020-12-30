@@ -34,6 +34,10 @@ class Library():
         if self.db.isContinueReading():
             self.run()
 
+    def downloadBooksForAppToWorkOffline(self) -> ():
+        for book in self.db.listAllBooks():
+            self.finder.downloadBook(book)
+
     @property
     def config(self):
         return self._config

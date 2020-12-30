@@ -50,8 +50,8 @@ class DB():
         )
         self.cursor.executemany("""
             INSERT INTO BOOK 
-            (IDENTIFIER,TITLE,CREATOR,DOWNLOADS,PUBLISHER,VOLUME,ENCODING)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (IDENTIFIER,TITLE,CREATOR,DOWNLOADS,PUBLISHER,VOLUME,ENCODING,DOWNLOADED)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
                                 [
                                     (
@@ -62,6 +62,7 @@ class DB():
                                         str(book.publisher),
                                         str(book.volume),
                                         None,
+                                        bool(book.downloaded),
                                     ) for book in books
                                 ]
                                 )
@@ -71,12 +72,12 @@ class DB():
             SELECT ?, ? WHERE NOT EXISTS(SELECT 1 FROM SUBJECT s WHERE s.IDENTIFIER = ? AND s.NAME = ?)
             """,
                                 [
-                                        (
-                                            str(book.identifier),
-                                            str(subject),
-                                            str(book.identifier),
-                                            str(subject),
-                                        ) for book in books for subject in book.subjects
+                                    (
+                                        str(book.identifier),
+                                        str(subject),
+                                        str(book.identifier),
+                                        str(subject),
+                                    ) for book in books for subject in book.subjects
                                 ]
                                 )
         self.connexion.commit()
@@ -98,11 +99,27 @@ class DB():
 
     def lastBook(self) -> Book:
         self.cursor.execute("""
-        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING
+        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED
         FROM CONTINUE_READING cr 
         JOIN BOOK book ON BOOK.IDENTIFIER = cr.IDENTIFIER
         """)
         return self.fetchBook()
+
+    def listAllBooks(self) -> list[Book]:
+        self.cursor.execute("""
+        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED
+        FROM BOOK book
+        """)
+        return [Book(
+                identifier=result[0],
+                title=result[1],
+                creator=result[2],
+                downloads=result[3],
+                publisher=result[4],
+                volume=result[5],
+                encoding=result[6],
+                downloaded=result[7],
+                ) for result in self.cursor.fetchall()]
 
     def fetchBook(self) -> Book:
         result = self.cursor.fetchone()
@@ -117,7 +134,13 @@ class DB():
                 publisher=result[4],
                 volume=result[5],
                 encoding=result[6],
+                downloaded=result[7],
             )
+
+    def markDownloaded(self, book: Book) -> ():
+        self.cursor.execute(
+            "UPDATE BOOK SET DOWNLOADED = 1 WHERE IDENTIFIER = ?", (book.identifier,))
+        self.connexion.commit()
 
     def updateContinueReading(self, continueReading: bool, identifier):
         if not identifier or identifier is None:
