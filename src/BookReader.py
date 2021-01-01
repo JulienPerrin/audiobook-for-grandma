@@ -25,8 +25,9 @@ class BookReader():
         self.engine = pyttsx3.init()
         self.rate = rate
         self.volume = volume
-        print("engine voices", [(voice.name, voice.id)
-                                for voice in self.engine.getProperty('voices')])
+        voices = [(voice.name, voice.id) for voice in self.engine.getProperty('voices')]
+        print("engine voices", voices)
+        self.engine.setProperty('voice', 'mb-fr4')
         if rate:
             self.engine.setProperty('rate', int(self.rate))
         if volume:

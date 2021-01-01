@@ -39,7 +39,7 @@ class DB():
         if self.connexion:
             self.connexion.close()
 
-    def addBooks(self, books: list[Book]):
+    def addBooks(self, books: list):
         self.cursor.executemany(
             "DELETE FROM BOOK WHERE identifier = ?",
             [(book.identifier,) for book in books]
@@ -105,7 +105,7 @@ class DB():
         """)
         return self.fetchBook()
 
-    def listAllBooks(self) -> list[Book]:
+    def listAllBooks(self) -> list:
         self.cursor.execute("""
         SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED
         FROM BOOK book

@@ -34,6 +34,8 @@
 - [ ] add a command to go faster/slower
 - [ ] reduce/increase volume
 - [ ] reduce/increase reading speed
+- [ ] choose alternative voice
+- [ ] moove back or forward
 
 ## Rasperry Pi interface
 

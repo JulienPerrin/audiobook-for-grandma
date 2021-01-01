@@ -1,2 +1,5 @@
+#!/bin/bash
+
+source venv/bin/activate
 make develop > make.log
-audiobook-for-grandma --start --language fr --rate 200 --volume 0.5
+./read-8BitDo-usb-input.sh > 8BitDo.log;

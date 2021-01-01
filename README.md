@@ -57,6 +57,8 @@ In Git Bash, or Bash in Linux :
 make env
 ```
 
+install mbrola
+
 ### Run dev
 
 ```bash

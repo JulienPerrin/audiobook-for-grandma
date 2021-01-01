@@ -12,10 +12,10 @@ class Book():
     pathOfFileToRead: str
     encoding: str
     downloaded: bool
-    subjects: list[str]
+    subjects: list
 
     def __init__(self, identifier: str, title: str, creator: str, downloads: str, publisher: str, 
-            volume: str, downloaded: bool, subjects: list[str] = [], encoding: str = None):
+            volume: str, downloaded: bool, subjects: list = [], encoding: str = None):
         self.identifier = identifier
         self.title = title
         self.creator = creator
@@ -36,3 +36,6 @@ class Book():
 
     def __str__(self):
         return "Book: [title: {} / identifier: {}]".format(self.title, self.identifier)
+
+    def __getitem__(self, item):
+         return getattr(self, item)
