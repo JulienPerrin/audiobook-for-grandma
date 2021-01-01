@@ -63,6 +63,7 @@ def execute_script(input_args):
     if parsed_args.skip:
         db = DB()
         db.skip()
+        print("Reader will skip to next book. ")
 
     if parsed_args.offline:
         print("Downloading the books. ")
