@@ -1,7 +1,7 @@
 #!/bin/bash
 
 USB_8BITDO_FILE=/dev/input/js0
-VOLUME=0.1
+VOLUME=0.5
 RATE=115
 
 button_A ()  {
@@ -12,6 +12,7 @@ button_A ()  {
 button_B ()  {
     echo "B: audiobook-for-grandma --start --language fr --rate $RATE --volume $VOLUME >> log/start.log &"
     audiobook-for-grandma --start --language fr --rate $RATE --volume $VOLUME >> log/start.log &
+    echo "starting"
 }
 
 button_X ()  {
