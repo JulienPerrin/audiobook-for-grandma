@@ -26,22 +26,25 @@
 
 ### Nice additional fonctionalities
 
-- [ ] read the book without using the lazy method of iterating on all the lines
-  - [ ] correctly manage unicode files
+- [ ] enabler : find a way to kill current reading
 - [ ] add a command to save book into favorites
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped
-- [ ] add a command to go faster/slower
 - [ ] reduce/increase volume
 - [ ] reduce/increase reading speed
-- [ ] choose alternative voice
+- [ ] make voice configurable in options
+- [ ] option file ?
 - [ ] moove back or forward
 
 ## Rasperry Pi interface
 
-- [ ] code a script  so that when a button connected to the raspberry is pushed, a command is executed on this project
-- [ ] how to connect buttons to the Raspberry Pi so that my grandma can push them 
-  - [ ] W10 on Raspberry
-  - [ ] or use bluetooth
+- [x] code a script  so that when a button connected to the raspberry is pushed, a command is executed on this project
+- [x] how to connect buttons to the Raspberry Pi so that my grandma can push them 
+  - [x] 8BidDio controller connected to the Raspberry via USB
 - [ ] write tutorial on how I did it
+  - buy the Raspberry Pi and the 8BitDo controller (links ?)
+  - flash Linux on Raspberry 
+  - clone the project on raspberry
+  - add it as a service in systemctl
+
 
