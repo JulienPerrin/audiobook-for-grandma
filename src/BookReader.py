@@ -2,9 +2,8 @@ import os
 from os.path import join
 
 import chardet
-from chardet.universaldetector import UniversalDetector
-
 import pyttsx3
+from chardet.universaldetector import UniversalDetector
 from pyttsx3 import engine
 
 from .DB import DB
@@ -67,43 +66,46 @@ class BookReader():
                 lineNumber = max(0, lineNumber-4)
             # read the book
             while self.db.isContinueReading() and not self.db.isSkipped(self.book.identifier) and not self.db.isFinished(self.book.identifier):
-                fullLine = bookFile.readline()
-                if not fullLine:
-                    self.db.markFinished()
-                line = fullLine.strip() + ' '
-                lineNumber += 1
-                # print("line {}: {}".format(lineNumber, line))
-                if not line.strip():
-                    continue
-                sentenceChunks = line.split('.')
-                i = 0
-                for sentenceChunk in sentenceChunks:
-                    textStripped = sentenceChunk.strip()
-                    if textStripped:
-                        if i == 0 and len(sentenceChunks) > 1:
-                            # the begining of the sentence is on the previous line, the end is on this line
-                            self.textToRead += '{}. '.format(textStripped)
-                            print("finished sentence: {}".format(self.textToRead))
-                            self.db.updateBookmark(identifier=self.book.identifier, lastLineRead=lineNumber)
-                            self.read()
-                        elif i == 0:
-                            # the begining of the sentence is on the previous line
-                            self.textToRead += '{} '.format(textStripped)
-                            # print("updated sentence: {}".format(self.textToRead))
-                        elif i < len(sentenceChunks)-1:
-                            # the entire sentence is on this line
-                            self.textToRead = '{}. '.format(textStripped)
-                            print("sentence: {}".format(self.textToRead))
-                            self.read()
-                        else:
-                            # the end of the sentence is on the next line
-                            self.textToRead = '{} '.format(textStripped)
-                            # print("beginned sentence: {}".format(self.textToRead))
-                    i += 1
+                self.readBookLine(lineNumber, bookFile.readline())
             # read the last sentence if it does not end with a point
             if (self.db.isFinished(self.book.identifier)):
                 self.read()
             print('\n')
+
+    def readBookLine(self, lineNumber, fullLine):
+        if not fullLine:
+            self.db.markFinished()
+        line = fullLine.strip() + ' '
+        lineNumber += 1
+        # print("line {}: {}".format(lineNumber, line))
+        if not line.strip():
+            return
+        sentenceChunks = line.split('.')
+        sentenceNumber = -1
+        for sentenceChunk in sentenceChunks:
+            sentenceNumber += 1 
+            textStripped = sentenceChunk.strip()
+            if not textStripped:
+                continue
+            if sentenceNumber == 0 and len(sentenceChunks) > 1:
+                # the begining of the sentence is on the previous line, the end is on this line
+                self.textToRead += '{}. '.format(textStripped)
+                print("finished sentence: {}".format(self.textToRead))
+                self.db.updateBookmark(identifier=self.book.identifier, lastLineRead=lineNumber)
+                self.read()
+            elif sentenceNumber == 0:
+                # the begining of the sentence is on the previous line
+                self.textToRead += '{} '.format(textStripped)
+                # print("updated sentence: {}".format(self.textToRead))
+            elif sentenceNumber < len(sentenceChunks)-1:
+                # the entire sentence is on this line
+                self.textToRead = '{}. '.format(textStripped)
+                print("sentence: {}".format(self.textToRead))
+                self.read()
+            else:
+                # the end of the sentence is on the next line
+                self.textToRead = '{} '.format(textStripped)
+                # print("beginned sentence: {}".format(self.textToRead))
 
     def onWord(self, name, location, length):
         if not self.db.isContinueReading():
@@ -127,7 +129,7 @@ class BookReader():
 
     def countFileLines(self) -> int:
         with open(self.book.pathOfFileToRead, encoding=self.book.encoding) as bookFileWithLinesToCount:
-            return sum([1 for i in bookFileWithLinesToCount])
+            return sum([1 for _ in bookFileWithLinesToCount])
 
     def hasGutenbergIntro(self):
         hasGutenbergIntro = False

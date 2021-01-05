@@ -167,7 +167,7 @@ class DB():
                 "INSERT INTO BOOKMARK VALUES (?, ?, ?, ?, ?)", (identifier, lastLineRead, numberOfLines, False, False))
         self.connexion.commit()
 
-    def getBookmark(self, identifier: str) -> int:
+    def getBookmark(self, identifier: str):
         self.cursor.execute(
             "SELECT * FROM BOOKMARK WHERE identifier = ?", (identifier,))
         result = self.cursor.fetchone()
