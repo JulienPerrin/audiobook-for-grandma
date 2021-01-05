@@ -1,0 +1,10 @@
+[Unit]
+Description=Audiobook for Grandma
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/home/pi/audiobook-for-grandma/start.sh
+
+[Install]
+WantedBy=multi-user.target
