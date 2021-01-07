@@ -26,7 +26,7 @@
 
 ### Nice additional fonctionalities
 
-- [ ] enabler : find a way to kill current reading better than the actual stop option
+- [x] enabler : find a way to kill current reading better than the actual stop option
 - [ ] add a command to save book into favorites (too complicated ?)
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped

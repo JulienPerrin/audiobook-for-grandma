@@ -5,8 +5,16 @@ VOLUME=0.5
 RATE=115
 LANGUAGE=fr
 
+stop_reader ()  {
+    sudo kill $(ps -ef | grep audiobook | grep python | grep -v "grep" | awk '{ print $2 }')
+    sudo kill $(ps -ef | grep mbrola | grep -v "grep" | awk '{ print $2 }')
+    sudo kill $(ps -ef | grep aplay | grep -v "grep" | awk '{ print $2 }')
+    echo "reader stopped reading"
+}
+
 button_A ()  {
     echo A
+    stop_reader
     audiobook-for-grandma --stop 
 }
 
