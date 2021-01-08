@@ -4,7 +4,7 @@ from os.path import join
 import chardet
 import pyttsx3
 from chardet.universaldetector import UniversalDetector
-from pyttsx3 import engine
+from pyttsx3.engine import Engine
 
 from .DB import DB
 from .model.Book import Book
@@ -13,7 +13,7 @@ from .model.Book import Book
 class BookReader():
     book: Book
     textToRead: str
-    engine: engine.Engine
+    engine: Engine
     db: DB
     rate: int
     volume: float
@@ -24,7 +24,8 @@ class BookReader():
         self.engine = pyttsx3.init()
         self.rate = rate
         self.volume = volume
-        voices = [(voice.name, voice.id) for voice in self.engine.getProperty('voices')]
+        voices = [(voice.name, voice.id)
+                  for voice in self.engine.getProperty('voices')]
         print("engine voices", voices)
         self.engine.setProperty('voice', 'mb-fr4')
         if rate:
@@ -35,12 +36,12 @@ class BookReader():
         if languageTest:
             self.engine.say(languageTest)
 
-    def read(self) -> ():
+    def read(self) -> None:
         self.engine.say(self.textToRead)
         self.engine.runAndWait()
         self.textToRead = ''
 
-    def readBook(self, book: Book) -> ():
+    def readBook(self, book: Book) -> None:
         self.book = book
         self.textToRead = ''
         # print("path to file to read: ", self.book.pathOfFileToRead)
@@ -48,15 +49,16 @@ class BookReader():
         if not hasattr(self.book, 'pathOfFileToRead'):
             raise ValueError("Book has not been downloaded")
         self.detectFileEncoding()
-        
+
         self.db.updateContinueReading(True, self.book.identifier)
         lineNumber = self.db.getBookmark(self.book.identifier)
         if lineNumber is None:
             lineNumber = 0
         if lineNumber == 0:
-            self.db.updateBookmark(identifier=self.book.identifier, lastLineRead=lineNumber, numberOfLines=self.countFileLines())
+            self.db.updateBookmark(identifier=self.book.identifier,
+                                   lastLineRead=lineNumber, numberOfLines=self.countFileLines())
         with open(self.book.pathOfFileToRead, encoding=self.book.encoding) as bookFile:
-            # if we have not already started reading the book, and if the gutenberg intro is at the beginning of the file, then remove it 
+            # if we have not already started reading the book, and if the gutenberg intro is at the beginning of the file, then remove it
             if lineNumber == 0 and self.hasGutenbergIntro():
                 self.skipGutenbergIntro(bookFile)
             # skip lines until we reach a bit before bookmark
@@ -83,7 +85,7 @@ class BookReader():
         sentenceChunks = line.split('.')
         sentenceNumber = -1
         for sentenceChunk in sentenceChunks:
-            sentenceNumber += 1 
+            sentenceNumber += 1
             textStripped = sentenceChunk.strip()
             if not textStripped:
                 continue
@@ -91,7 +93,8 @@ class BookReader():
                 # the begining of the sentence is on the previous line, the end is on this line
                 self.textToRead += '{}. '.format(textStripped)
                 print("finished sentence: {}".format(self.textToRead))
-                self.db.updateBookmark(identifier=self.book.identifier, lastLineRead=lineNumber)
+                self.db.updateBookmark(
+                    identifier=self.book.identifier, lastLineRead=lineNumber)
                 self.read()
             elif sentenceNumber == 0:
                 # the begining of the sentence is on the previous line
@@ -111,15 +114,15 @@ class BookReader():
         if not self.db.isContinueReading():
             self.engine.stop()
 
-    def detectFileEncoding(self) -> ():
+    def detectFileEncoding(self) -> None:
         if not hasattr(self.book, 'encoding') or self.book.encoding is None:
             detector = UniversalDetector()
             with open(self.book.pathOfFileToRead, 'rb') as bookFile:
                 for line in bookFile:
                     detector.feed(line)
-                    if not line: 
+                    if not line:
                         break
-                    if detector.done: 
+                    if detector.done:
                         break
             detector.close()
             encoding = detector.result['encoding']
@@ -134,13 +137,12 @@ class BookReader():
     def hasGutenbergIntro(self):
         hasGutenbergIntro = False
         with open(self.book.pathOfFileToRead, encoding=self.book.encoding) as bookFile:
-            uselessLineIndex = 500
-            while 1:
+            uselessLineIndex = 0
+            while uselessLineIndex < 500:
                 uselessLine = bookFile.readline()
+                uselessLineIndex += 1
                 if uselessLine and not uselessLine.startswith('*** START OF THIS PROJECT GUTENBERG'):
                     hasGutenbergIntro = True
-                uselessLineIndex += 1
-                if (uselessLineIndex > 500):
                     break
         return hasGutenbergIntro
 

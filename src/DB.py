@@ -87,7 +87,7 @@ class DB():
         count = self.cursor.fetchone()
         return count is not None and count[0] > 100
 
-    def updateEncoding(self, identifier: str, encoding: str) -> ():
+    def updateEncoding(self, identifier: str, encoding: str) -> None:
         self.cursor.execute(
             "UPDATE BOOK SET ENCODING = ? WHERE IDENTIFIER = ?", (encoding, identifier))
         self.connexion.commit()
@@ -137,7 +137,7 @@ class DB():
                 downloaded=result[7],
             )
 
-    def markDownloaded(self, book: Book) -> ():
+    def markDownloaded(self, book: Book) -> None:
         self.cursor.execute(
             "UPDATE BOOK SET DOWNLOADED = 1 WHERE IDENTIFIER = ?", (book.identifier,))
         self.connexion.commit()
@@ -176,7 +176,7 @@ class DB():
         else:
             return None
 
-    def skip(self) -> ():
+    def skip(self) -> None:
         self.cursor.execute(
             "UPDATE BOOKMARK SET SKIPPED=1 WHERE identifier = ?", (self.lastBook().identifier,))
         self.connexion.commit()
@@ -187,7 +187,7 @@ class DB():
         result = self.cursor.fetchone()
         return result is not None and result[0]
 
-    def markFinished(self) -> ():
+    def markFinished(self) -> None:
         self.cursor.execute(
             "UPDATE BOOKMARK SET FINISHED=1 WHERE identifier = ?", (self.lastBook().identifier,))
         self.connexion.commit()

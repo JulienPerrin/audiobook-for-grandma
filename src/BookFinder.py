@@ -20,7 +20,7 @@ class BookFinder():
         if not self.db.isBookListDownloaded():
             self.downloadBookList()
 
-    def downloadBookList(self) -> ():
+    def downloadBookList(self) -> None:
         # not good :
         # https://archive.org/advancedsearch.php?q=collection%3A%28gutenberg%29+AND+mediatype%3A%28texts%29+AND+language%3A%28fr%29&fl%5B%5D=creator&fl%5B%5D=downloads&fl%5B%5D=format&fl%5B%5D=subject&fl%5B%5D=identifier&fl%5B%5D=name&fl%5B%5D=publicdate&fl%5B%5D=publisher&fl%5B%5D=title&fl%5B%5D=volume&sort%5B%5D=downloads+desc&sort%5B%5D=&sort%5B%5D=&rows=50&page=1&output=json&callback=callback&save=yes#raw
         # better use scrapping API :
@@ -72,9 +72,9 @@ class BookFinder():
                 self.downloadBook(nextBook)
             return nextBook
 
-    def downloadBook(self, book: Book) -> ():
+    def downloadBook(self, book: Book) -> None:
         download(book.identifier, destdir=join('out', 'gutenberg'),
-                    verbose=True, checksum=True, glob_pattern='*txt', ignore_existing=True)
+                 verbose=True, checksum=True, glob_pattern='*txt', ignore_existing=True)
         book.downloaded = True
         self.db.markDownloaded(book)
         book.updatePathOfFileToRead()

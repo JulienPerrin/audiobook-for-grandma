@@ -15,20 +15,63 @@ def parse_input_args(argv):
     ''' Parses command line arguments '''
 
     parser = argparse.ArgumentParser(
-        description='''This app is made to allow old people to have an easy access to books of the Gutenberg library. 
+        description='''This app is made to allow old people to have an easy access to books of the Gutenberg library.
         It is especially made for people with sight disabilities. ''')
     parser.add_argument('--test', help="Test the app.", action='store_true')
     parser.add_argument('--start', help="Start the app.", action='store_true')
     parser.add_argument('--stop', help="Stop the app.", action='store_true')
     parser.add_argument('--skip', help="Stop the app.", action='store_true')
-    parser.add_argument('--offline', help="Download all the books of the gutenberg library for the selected language, so that the app can work offline", action='store_true')
+    parser.add_argument(
+        '--offline', help="Download all the books of the gutenberg library for the selected language, so that the app can work offline", action='store_true')
     parser.add_argument('--language', help="set the language of the books that are read",
                         choices=['fr', 'en'], action='store')
     parser.add_argument(
         '--rate', help="the number of words per minute", action='store')
     parser.add_argument(
         '--volume', help="the volume between 0.0 and 1.0", action='store')
+    parser.add_argument(
+        '--lower', help="Lower reader voice.", action='store_true')
+    parser.add_argument(
+        '--higher', help="Raise reader voice.", action='store_true')
+    parser.add_argument(
+        '--slower', help="Slow reader voice.", action='store_true')
+    parser.add_argument(
+        '--faster', help="Raise reader voice.", action='store_true')
     return parser.parse_args()
+
+
+def start(config_file, parsed_args):
+    print("Starting the app.")
+    print("language:", parsed_args.language)
+    print("rate:", parsed_args.rate)
+    print("volume:", parsed_args.volume)
+    if parsed_args.language is None:
+        raise ValueError("Language is mandatory with value error")
+    library = Library(configFile=config_file, language=parsed_args.language,
+                      rate=parsed_args.rate, volume=parsed_args.volume)
+    library.run()
+
+
+def stop(config_file, parsed_args):
+    print("Stopping the app.")
+    db = DB()
+    lastBook: Book = db.lastBook()
+    if lastBook is None:
+        raise ValueError("Impossible to stop as books where never read")
+    db.updateContinueReading(False, db.lastBook().identifier)
+    print("Reader will continue running : {}".format(
+        bool(db.isContinueReading())))
+
+
+def offline(config_file, parsed_args):
+    print("Downloading the books. ")
+    print("language:", parsed_args.language)
+    if parsed_args.language is None:
+        raise ValueError("Language is mandatory with value error")
+    library = Library(configFile=config_file, language=parsed_args.language,
+                      rate=parsed_args.rate, volume=parsed_args.volume)
+    library.downloadBooksForAppToWorkOffline()
+    print("All books have been downloaded. ")
 
 
 def execute_script(input_args):
@@ -38,27 +81,12 @@ def execute_script(input_args):
     if parsed_args.test:
         db = DB()
         db.test()
-        
+
     if parsed_args.start or parsed_args.test:
-        print("Starting the app.")
-        print("language:", parsed_args.language)
-        print("rate:", parsed_args.rate)
-        print("volume:", parsed_args.volume)
-        if parsed_args.language is None:
-            raise ValueError("Language is mandatory with value error")
-        library = Library(configFile=config_file, language=parsed_args.language,
-                          rate=parsed_args.rate, volume=parsed_args.volume)
-        library.run()
+        start(config_file, parsed_args)
 
     if parsed_args.stop:
-        print("Stopping the app.")
-        db = DB()
-        lastBook: Book = db.lastBook()
-        if lastBook is None:
-            raise ValueError("Impossible to stop as books where never read")
-        db.updateContinueReading(False, db.lastBook().identifier)
-        print("Reader will continue running : {}".format(
-            bool(db.isContinueReading())))
+        stop(config_file, parsed_args)
 
     if parsed_args.skip:
         db = DB()
@@ -66,14 +94,17 @@ def execute_script(input_args):
         print("Reader will skip to next book. ")
 
     if parsed_args.offline:
-        print("Downloading the books. ")
-        print("language:", parsed_args.language)
-        if parsed_args.language is None:
-            raise ValueError("Language is mandatory with value error")
-        library = Library(configFile=config_file, language=parsed_args.language,
-                          rate=parsed_args.rate, volume=parsed_args.volume)
-        library.downloadBooksForAppToWorkOffline()
-        print("All books have been downloaded. ")
+        offline(config_file, parsed_args)
+
+    if parsed_args.lower:
+        ""
+    if parsed_args.higher:
+        ""
+    if parsed_args.slower:
+        ""
+    if parsed_args.faster:
+        ""
+
 
 def main():
     # Entry point to the app. Call in test method
