@@ -66,11 +66,11 @@ button_UP ()  {
 
 button_START ()  {
     echo START
-    audiobook-for-grandma --skip 
 }
 
 button_SELECT ()  {
     echo SELECT
+    audiobook-for-grandma --skip 
 }
 
 button_HOME () {
