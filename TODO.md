@@ -32,7 +32,7 @@
   - [ ] add a command to read the favorites when the reading is stoped
 - [x] reduce/increase volume
 - [x] reduce/increase reading speed
-- [ ] make voice configurable in options
+- [x] make voice configurable in options
 - [x] option file 
 - [ ] moove back or forward
 
