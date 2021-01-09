@@ -1,10 +1,6 @@
 #!/bin/bash
 
-USB_8BITDO_FILE=/dev/input/js0
-VOLUME=0.5
-RATE=115
-LANGUAGE=fr
-VOICE=mb-fr4
+source ./config.sh
 
 stop_reader ()  {
     sudo kill $(ps -ef | grep audiobook | grep python | grep -v "grep" | awk '{ print $2 }')

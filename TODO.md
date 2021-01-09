@@ -26,12 +26,12 @@
 
 ### Nice additional fonctionalities
 
-- [x] enabler : find a way to kill current reading better than the actual stop option
+- [x] ---enabler--- (does not work really well) : find a way to kill current reading better than the actual stop option
 - [ ] add a command to save book into favorites (too complicated ?)
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped
-- [ ] reduce/increase volume
-- [ ] reduce/increase reading speed
+- [x] reduce/increase volume
+- [x] reduce/increase reading speed
 - [ ] make voice configurable in options
 - [ ] option file ?
 - [ ] moove back or forward
