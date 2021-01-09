@@ -15,14 +15,14 @@ class Library():
 
     db: DB
 
-    def __init__(self, configFile, rate: int, volume: float, language='en'):
+    def __init__(self, configFile, defaultRate: int, defaultVolume: float, language='en'):
 
         self.config = self.load_config(configFile)
         self.db = DB()
         self.finder = BookFinder(self.db)
         test = self.config['test_language']
         self.reader = BookReader(
-            db=self.db, languageTest=test[language], rate=rate, volume=volume)
+            db=self.db, languageTest=test[language], defaultRate=defaultRate, defaultVolume=defaultVolume)
 
         # DO this once, in the top level class.
         logging.config.dictConfig(self.config['logging'])

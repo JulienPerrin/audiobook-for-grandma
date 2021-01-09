@@ -10,6 +10,9 @@ from src.DB import DB
 from src.Library import Library
 from src.model.Book import Book
 
+VOLUME_CHANGE: float = 0.05
+RATE_CHANGE: int = 10
+
 
 def parse_input_args(argv):
     ''' Parses command line arguments '''
@@ -48,7 +51,7 @@ def start(config_file, parsed_args):
     if parsed_args.language is None:
         raise ValueError("Language is mandatory with value error")
     library = Library(configFile=config_file, language=parsed_args.language,
-                      rate=parsed_args.rate, volume=parsed_args.volume)
+                      defaultRate=parsed_args.rate, defaultVolume=parsed_args.volume)
     library.run()
 
 
@@ -93,17 +96,32 @@ def execute_script(input_args):
         db.skip()
         print("Reader will skip to next book. ")
 
+    # download all books of a certain language
     if parsed_args.offline:
         offline(config_file, parsed_args)
 
+    # increase/decrease volume
     if parsed_args.lower:
-        ""
+        print("Lower volume. ")
+        db = DB()
+        print(db.getVolume())
+        print(db.getVolume() - VOLUME_CHANGE)
+        db.setVolume(max(0.0, db.getVolume() - VOLUME_CHANGE))
+        print(db.getVolume())
     if parsed_args.higher:
-        ""
+        print("Raise volume. ")
+        db = DB()
+        db.setVolume(min(1.0, db.getVolume() + VOLUME_CHANGE))
+
+    # increase/decrease rate of speech
     if parsed_args.slower:
-        ""
+        print("Lower speech rate. ")
+        db = DB()
+        db.setRate(max(10, db.getRate() - RATE_CHANGE))
     if parsed_args.faster:
-        ""
+        print("Raise speech rate. ")
+        db = DB()
+        db.setRate(min(1000, db.getRate() + RATE_CHANGE))
 
 
 def main():

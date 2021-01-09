@@ -197,3 +197,19 @@ class DB():
             "SELECT FINISHED FROM BOOKMARK WHERE identifier = ?", (identifier,))
         result = self.cursor.fetchone()
         return result is not None and result[0]
+
+    def getVolume(self) -> float:
+        result = self.cursor.execute("SELECT * FROM VOLUME").fetchone()
+        return float(result[0])
+
+    def getRate(self) -> int:
+        result = self.cursor.execute("SELECT * FROM RATE").fetchone()
+        return int(result[0])
+
+    def setVolume(self, volume: float) -> None:
+        self.cursor.execute("UPDATE VOLUME SET VOLUME = ?", (volume,))
+        self.connexion.commit()
+
+    def setRate(self, rate: int) -> None:
+        self.cursor.execute("UPDATE RATE SET RATE = ?", (rate,))
+        self.connexion.commit()

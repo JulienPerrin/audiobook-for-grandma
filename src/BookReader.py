@@ -4,6 +4,7 @@ from os.path import join
 import chardet
 import pyttsx3
 from chardet.universaldetector import UniversalDetector
+from pyttsx3 import engine
 from pyttsx3.engine import Engine
 
 from .DB import DB
@@ -15,24 +16,21 @@ class BookReader():
     textToRead: str
     engine: Engine
     db: DB
-    rate: int
-    volume: float
 
-    def __init__(self, db, languageTest='', rate: int = 150, volume=0.5):
+    def __init__(self, db, defaultRate: int, defaultVolume: float, languageTest=''):
         self.textToRead = ''
         self.db = db
+        if defaultVolume:
+            self.db.setVolume(defaultVolume)
+        if defaultRate:
+            self.db.setRate(defaultRate)
         self.engine = pyttsx3.init()
-        self.rate = rate
-        self.volume = volume
+        self.engine.setProperty('volume', self.db.getVolume())
+        self.engine.setProperty('rate', self.db.getRate())
         voices = [(voice.name, voice.id)
                   for voice in self.engine.getProperty('voices')]
         print("engine voices", voices)
         self.engine.setProperty('voice', 'mb-fr4')
-        if rate:
-            self.engine.setProperty('rate', int(self.rate))
-        if volume:
-            self.engine.setProperty('volume', float(self.volume))
-        self.engine.connect('started-word', self.onWord)
         if languageTest:
             self.engine.say(languageTest)
 
@@ -69,6 +67,8 @@ class BookReader():
             # read the book
             while self.db.isContinueReading() and not self.db.isSkipped(self.book.identifier) and not self.db.isFinished(self.book.identifier):
                 self.readBookLine(lineNumber, bookFile.readline())
+                self.engine.setProperty('volume', self.db.getVolume())
+                self.engine.setProperty('rate', self.db.getRate())
             # read the last sentence if it does not end with a point
             if (self.db.isFinished(self.book.identifier)):
                 self.read()
@@ -109,10 +109,6 @@ class BookReader():
                 # the end of the sentence is on the next line
                 self.textToRead = '{} '.format(textStripped)
                 # print("beginned sentence: {}".format(self.textToRead))
-
-    def onWord(self, name, location, length):
-        if not self.db.isContinueReading():
-            self.engine.stop()
 
     def detectFileEncoding(self) -> None:
         if not hasattr(self.book, 'encoding') or self.book.encoding is None:
