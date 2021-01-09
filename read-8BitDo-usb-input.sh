@@ -17,7 +17,7 @@ button_A ()  {
 
 button_B ()  {
     echo "B: audiobook-for-grandma --start --language $LANGUAGE --rate $RATE --volume $VOLUME >> log/start.log &"
-    audiobook-for-grandma --start --language fr --rate $RATE --volume $VOLUME >> log/start.log &
+    audiobook-for-grandma --start --language fr --rate $RATE --volume $VOLUME --voice $VOICE >> log/start.log &
     echo "starting"
 }
 

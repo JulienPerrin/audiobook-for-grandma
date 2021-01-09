@@ -26,14 +26,14 @@
 
 ### Nice additional fonctionalities
 
-- [x] ---enabler--- (does not work really well) : find a way to kill current reading better than the actual stop option
+- [x] find a way to kill current reading better than the actual stop option
 - [ ] add a command to save book into favorites (too complicated ?)
   - [ ] add possiblity to remove from fav
   - [ ] add a command to read the favorites when the reading is stoped
 - [x] reduce/increase volume
 - [x] reduce/increase reading speed
 - [ ] make voice configurable in options
-- [ ] option file ?
+- [x] option file 
 - [ ] moove back or forward
 
 ## Rasperry Pi interface

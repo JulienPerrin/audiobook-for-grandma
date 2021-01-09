@@ -6,6 +6,7 @@ import pyttsx3
 from chardet.universaldetector import UniversalDetector
 from pyttsx3 import engine
 from pyttsx3.engine import Engine
+from yaml import __version__
 
 from .DB import DB
 from .model.Book import Book
@@ -17,7 +18,7 @@ class BookReader():
     engine: Engine
     db: DB
 
-    def __init__(self, db, defaultRate: int, defaultVolume: float, languageTest=''):
+    def __init__(self, db, defaultRate: int, defaultVolume: float, voice: str, languageTest=''):
         self.textToRead = ''
         self.db = db
         if defaultVolume:
@@ -27,10 +28,9 @@ class BookReader():
         self.engine = pyttsx3.init()
         self.engine.setProperty('volume', self.db.getVolume())
         self.engine.setProperty('rate', self.db.getRate())
-        voices = [(voice.name, voice.id)
-                  for voice in self.engine.getProperty('voices')]
+        voices = [(v.name, v.id) for v in self.engine.getProperty('voices')]
         print("engine voices", voices)
-        self.engine.setProperty('voice', 'mb-fr4')
+        self.engine.setProperty('voice', voice)
         if languageTest:
             self.engine.say(languageTest)
 

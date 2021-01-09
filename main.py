@@ -28,6 +28,7 @@ def parse_input_args(argv):
         '--offline', help="Download all the books of the gutenberg library for the selected language, so that the app can work offline", action='store_true')
     parser.add_argument('--language', help="set the language of the books that are read",
                         choices=['fr', 'en'], action='store')
+    parser.add_argument('--voice', help="Set the voice that pyttsx3 will use to make sound. On Linux, MBrola voices work too (see https://github.com/numediart/MBROLA-voices to install an MBrola voice). ", action='store')
     parser.add_argument(
         '--rate', help="the number of words per minute", action='store')
     parser.add_argument(
@@ -48,10 +49,11 @@ def start(config_file, parsed_args):
     print("language:", parsed_args.language)
     print("rate:", parsed_args.rate)
     print("volume:", parsed_args.volume)
+    print("voice: ", parsed_args.voice)
     if parsed_args.language is None:
         raise ValueError("Language is mandatory with value error")
     library = Library(configFile=config_file, language=parsed_args.language,
-                      defaultRate=parsed_args.rate, defaultVolume=parsed_args.volume)
+                      defaultRate=parsed_args.rate, defaultVolume=parsed_args.volume, voice=parsed_args.voice)
     library.run()
 
 
