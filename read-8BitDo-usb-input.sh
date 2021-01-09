@@ -23,10 +23,12 @@ button_B ()  {
 
 button_X ()  {
     echo X
+    espeak "0" 
 }
 
 button_Y ()  {
     echo Y
+    espeak "favori" 
 }
 
 button_L1 ()  {
