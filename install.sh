@@ -29,4 +29,3 @@ sudo chmod 644 /lib/systemd/system/afg.service
 sudo systemctl daemon-reload
 sudo systemctl enable afg.service
 sudo systemctl start afg.service
-sudo reboot
