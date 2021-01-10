@@ -43,17 +43,11 @@
   - [x] 8BidDio controller connected to the Raspberry via USB
 - [ ] write tutorial on how I did it
   - buy the Raspberry Pi and the 8BitDo controller (links ?)
-  - flash Linux on Raspberry
-  - install espeak
-  - install mbrola voice : https://github.com/espeak-ng/espeak-ng/blob/master/docs/mbrola.md#installation-of-mbrola-package-from-source
-  - install python3 and make python3 default
-  - install make
-  - pip install virtualenv wheel setuptools
-  - virtualenv venv
-  - clone the project on raspberry
+  - flash Linux on Raspberry (for exemple Noobs)
+  - chmod +x install.sh
+  - run install.sh
   - explain how to update options:
     - default volume
     - default rate of speech
     - default voice
     - default language
-  - add it as a service in systemctl
