@@ -1,12 +1,9 @@
-import os
 from os.path import join
 
-import chardet
 import pyttsx3
 from chardet.universaldetector import UniversalDetector
 from pyttsx3 import engine
 from pyttsx3.engine import Engine
-from yaml import __version__
 
 from .DB import DB
 from .model.Book import Book
@@ -28,11 +25,23 @@ class BookReader():
         self.engine = pyttsx3.init()
         self.engine.setProperty('volume', self.db.getVolume())
         self.engine.setProperty('rate', self.db.getRate())
+        self.engine.connect('started-utterance', self.onStart)
+        self.engine.connect('started-word', self.onWord)
+        self.engine.connect('finished-utterance', self.onEnd)
         voices = [(v.name, v.id) for v in self.engine.getProperty('voices')]
         print("engine voices", voices)
         self.engine.setProperty('voice', voice)
         if languageTest:
             self.engine.say(languageTest)
+
+    def onStart(self, name):
+        print('starting', name)
+
+    def onWord(self, name, location, length):
+        print('word', name, location, length)
+
+    def onEnd(self, name, completed):
+        print('finishing', name, completed)
 
     def read(self) -> None:
         self.engine.say(self.textToRead)
@@ -48,17 +57,11 @@ class BookReader():
             raise ValueError("Book has not been downloaded")
         self.detectFileEncoding()
 
-        self.db.updateContinueReading(True, self.book.identifier)
-        lineNumber = self.db.getBookmark(self.book.identifier)
-        if lineNumber is None:
-            lineNumber = 0
-        if lineNumber == 0:
-            self.db.updateBookmark(identifier=self.book.identifier,
-                                   lastLineRead=lineNumber, numberOfLines=self.countFileLines())
+        lineNumber = self.startReadingAndReturnFirstLine()
         with open(self.book.pathOfFileToRead, encoding=self.book.encoding) as bookFile:
             # if we have not already started reading the book, and if the gutenberg intro is at the beginning of the file, then remove it
-            if lineNumber == 0 and self.hasGutenbergIntro():
-                self.skipGutenbergIntro(bookFile)
+            if lineNumber < 20 and self.hasGutenbergIntro():
+                lineNumber = self.skipGutenbergIntro(bookFile)
             # skip lines until we reach a bit before bookmark
             else:
                 for _ in range(0, lineNumber-5):
@@ -73,6 +76,20 @@ class BookReader():
             if (self.db.isFinished(self.book.identifier)):
                 self.read()
             print('\n')
+
+    def startReadingAndReturnFirstLine(self) -> int:
+        self.db.updateContinueReading(True, self.book.identifier)
+        lineNumber = self.db.getBookmark(self.book.identifier)
+        if lineNumber is None:
+            lineNumber = 0
+        if lineNumber == 0:
+            self.db.updateBookmark(identifier=self.book.identifier,
+                                   lastLineRead=lineNumber, numberOfLines=self.countFileLines())
+        self.textToRead = self.book.title
+        self.read()
+        self.textToRead = self.book.creator
+        self.read()
+        return lineNumber
 
     def readBookLine(self, lineNumber, fullLine):
         if not fullLine:
@@ -92,7 +109,7 @@ class BookReader():
             if sentenceNumber == 0 and len(sentenceChunks) > 1:
                 # the begining of the sentence is on the previous line, the end is on this line
                 self.textToRead += '{}. '.format(textStripped)
-                print("finished sentence: {}".format(self.textToRead))
+                # print("finished sentence: {}".format(self.textToRead))
                 self.db.updateBookmark(
                     identifier=self.book.identifier, lastLineRead=lineNumber)
                 self.read()
@@ -103,7 +120,7 @@ class BookReader():
             elif sentenceNumber < len(sentenceChunks)-1:
                 # the entire sentence is on this line
                 self.textToRead = '{}. '.format(textStripped)
-                print("sentence: {}".format(self.textToRead))
+                # print("sentence: {}".format(self.textToRead))
                 self.read()
             else:
                 # the end of the sentence is on the next line
@@ -140,12 +157,16 @@ class BookReader():
                 if uselessLine and not uselessLine.startswith('*** START OF THIS PROJECT GUTENBERG'):
                     hasGutenbergIntro = True
                     break
+        print("This book has the Gutenberg intro:", hasGutenbergIntro)
         return hasGutenbergIntro
 
-    def skipGutenbergIntro(self, bookFile):
+    def skipGutenbergIntro(self, bookFile) -> int:
+        print("Skipping Gutenberg intro")
+        lineNumber = 0
         while 1:
             uselessLine = bookFile.readline()
             if uselessLine and not uselessLine.startswith('*** START OF THIS PROJECT GUTENBERG'):
-                continue
+                lineNumber += 1
             else:
                 break
+        return lineNumber
