@@ -48,21 +48,25 @@ button_R2 ()  {
 button_LEFT ()  {
     echo LEFT
     audiobook-for-grandma --slower
+    echo "OK"
 }
 
 button_RIGHT ()  {
     echo RIGHT
     audiobook-for-grandma --faster
+    echo "OK"
 }
 
 button_DOWN ()  {
     echo DOWN
     audiobook-for-grandma --lower
+    echo "OK"
 }
 
 button_UP ()  {
     echo UP
     audiobook-for-grandma --higher
+    echo "OK"
 }
 
 button_START ()  {
@@ -72,6 +76,7 @@ button_START ()  {
 button_SELECT ()  {
     echo SELECT
     audiobook-for-grandma --skip 
+    echo "OK"
 }
 
 button_HOME () {
@@ -89,7 +94,7 @@ parse_8BitDo_USB_data () {
         #echo $usb_data
 
         #press 'A'
-        #0000090 010 320 100 000 000 000 202 007 316 322 100 000 001 000 001 000 00000a0
+        #e238 1f2f 0000 0782 ea12 1f2f 0001 0101
         regex='([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4})'
         if [[ $usb_data =~ $regex ]]; then
             action="${BASH_REMATCH[7]}"
