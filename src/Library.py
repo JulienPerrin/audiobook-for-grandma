@@ -36,7 +36,8 @@ class Library():
 
     def downloadBooksForAppToWorkOffline(self) -> None:
         for book in self.db.listAllBooks():
-            self.finder.downloadBook(book)
+            if not book.downloaded:
+                self.finder.downloadBook(book)
 
     @property
     def config(self):
