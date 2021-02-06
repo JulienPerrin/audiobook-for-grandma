@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo apt update
 
 sudo apt install make
@@ -5,7 +7,7 @@ sudo apt install make
 # install espeak (TTS reader)
 sudo apt install espeak -y
 # add MBrola voice to espeak
-cd ~/Downloads/
+cd ~/Downloads/ || exit
 wget https://raspberry-pi.fr/download/espeak/mbrola3.0.1h_armhf.deb -O mbrola.deb
 # install the voice that you like
 sudo apt install mbrola-fr4 -y
@@ -18,9 +20,9 @@ pip install wheel setuptools
 sudo -H pip install virtualenv
 
 #install project audiobook-for-grandma
-cd
+cd || exit
 git clone https://github.com/JulienPerrin/audiobook-for-grandma
-cd audiobook-for-grandma
+cd audiobook-for-grandma || exit
 virtualenv venv
 easy_install PyYAML
 /home/pi/audiobook-for-grandma/venv/bin/python -m pip install --upgrade pip

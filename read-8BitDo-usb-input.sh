@@ -1,11 +1,12 @@
 #!/bin/bash
 
+# shellcheck disable=SC1091
 source ./config.sh
 
 stop_reader ()  {
-    sudo kill $(ps -ef | grep audiobook | grep python | grep -v "grep" | awk '{ print $2 }')
-    sudo kill $(ps -ef | grep mbrola | grep -v "grep" | awk '{ print $2 }')
-    sudo kill $(ps -ef | grep aplay | grep -v "grep" | awk '{ print $2 }')
+    pgrep audiobook | sudo xargs kill
+    pgrep mbrola | sudo xargs kill
+    pgrep aplay | sudo xargs kill
     echo "reader stopped reading"
     audiobook-for-grandma --stop 
 }
@@ -17,7 +18,7 @@ button_A ()  {
 
 button_B ()  {
     echo "B: audiobook-for-grandma --start --language $LANGUAGE --rate $RATE --volume $VOLUME --voice $VOICE >> log/start.log &"
-    audiobook-for-grandma --start --language fr --rate $RATE --volume $VOLUME --voice $VOICE >> log/start.log &
+    audiobook-for-grandma --start --language fr --rate "$RATE" --volume "$VOLUME" --voice "$VOICE" >> log/start.log &
     echo "starting"
 }
 
@@ -90,7 +91,7 @@ button_unknow () {
 parse_8BitDo_USB_data () {
     if [ -e "$USB_8BITDO_FILE" ]; then
         #echo "$USB_8BITDO_FILE exists."
-        usb_data=$(hexdump -e '8/2 "%04x " "\n"' -s 144 -n 16 $USB_8BITDO_FILE)
+        usb_data=$(hexdump -e '8/2 "%04x " "\n"' -s 144 -n 16 "$USB_8BITDO_FILE")
         #echo $usb_data
 
         #press 'A'
@@ -125,7 +126,7 @@ parse_8BitDo_USB_data () {
                             button_HOME
                             ;;
                         *)
-                            button_unknow $action $button;;
+                            button_unknow "$action" "$button";;
                     esac;;
                 7fff)
                     case $button in
@@ -141,7 +142,7 @@ parse_8BitDo_USB_data () {
                             # joysticks
                             ;;
                         *)
-                            button_unknow $action $button;;
+                            button_unknow "$action" "$button";;
                     esac;;
                 8001)
                     case $button in
@@ -156,7 +157,7 @@ parse_8BitDo_USB_data () {
                             # joysticks
                             ;;
                         *)
-                            button_unknow $action $button;;
+                            button_unknow "$action" "$button";;
                     esac;;
                 0000)
                     #pull
@@ -167,7 +168,7 @@ parse_8BitDo_USB_data () {
                             # joysticks
                             ;;
                         *)
-                            button_unknow $action $button;;
+                            button_unknow "$action" "$button";;
                     esac;;
             esac
         fi
