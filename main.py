@@ -18,16 +18,20 @@ def parse_input_args(argv):
     ''' Parses command line arguments '''
 
     parser = argparse.ArgumentParser(
-        description='''This app is made to allow old people to have an easy access to books of the Gutenberg library.
-        It is especially made for people with sight disabilities. ''')
-    parser.add_argument('--test', help="Test the app.", action='store_true')
+        description='''
+        This app is made to allow old people to have an easy access to books of the Gutenberg library.
+        It is especially made for people with sight disabilities. 
+        ''')
+    parser.add_argument(
+        '--test', help="Test the app. For dev purposes only. ", action='store_true')
     parser.add_argument('--start', help="Start the app.", action='store_true')
     parser.add_argument('--stop', help="Stop the app.", action='store_true')
-    parser.add_argument('--skip', help="Stop the app.", action='store_true')
+    parser.add_argument(
+        '--skip', help="Skip the book that is currently read and start reading the next book if the app is running.", action='store_true')
     parser.add_argument(
         '--offline', help="Download all the books of the gutenberg library for the selected language, so that the app can work offline", action='store_true')
     parser.add_argument(
-        '--language', help="set the language of the books that are read", action='store')
+        '--language', help="Set the language of the books that are read. Example value : en", action='store')
     parser.add_argument('--voice', help="Set the voice that pyttsx3 will use to make sound. On Linux, MBrola voices work too (see https://github.com/numediart/MBROLA-voices to install an MBrola voice). ", action='store')
     parser.add_argument(
         '--rate', help="the number of words per minute", action='store')
@@ -40,7 +44,7 @@ def parse_input_args(argv):
     parser.add_argument(
         '--slower', help="Slow reader voice.", action='store_true')
     parser.add_argument(
-        '--faster', help="Raise reader voice.", action='store_true')
+        '--faster', help="Speeds reader voice.", action='store_true')
     return parser.parse_args()
 
 
