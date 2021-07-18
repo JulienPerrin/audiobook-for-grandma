@@ -31,11 +31,11 @@ class Book():
         
     def updatePathOfFileToRead(self):
         if self.publisher == 'Gallica_direct':
-            path = join('out', 'gallica', self.identifier, '{}.txt'.format(self.identifier))
+            path = join('out', 'gallica', self.identifier)
         else:
             path = join('out', 'gutenberg', self.identifier)
         if (isdir(path)):
-            files = [f for f in listdir(path) if isfile(join(path, f))]
+            files = [f for f in listdir(path) if isfile(join(path, f)) and f.split('.')[-1] == 'txt']
             if files and len(files) > 0:
                 self.pathOfFileToRead = join(path, files[0])
 
