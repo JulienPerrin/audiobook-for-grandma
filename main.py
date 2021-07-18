@@ -81,8 +81,9 @@ def offline(config_file, parsed_args):
         raise ValueError("Language is mandatory with value error")
     library = Library(configFile=config_file,
                       language=parsed_args.language, defaultRate=115, defaultVolume=0.5, voice='en1')
-    #library.downloadBooksForAppToWorkOffline(BookFinderGutenberg(library.db))
-    library.downloadBooksForAppToWorkOffline(BookFinderGallica(library.db))
+    library.downloadBooksForAppToWorkOffline(BookFinderGutenberg(library.db))
+    if parsed_args.language == 'fr':
+        library.downloadBooksForAppToWorkOffline(BookFinderGallica(library.db))
     print("All books have been downloaded. ")
 
 
