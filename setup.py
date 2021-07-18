@@ -1,10 +1,10 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 # https://www.digitalocean.com/community/tutorials/how-to-package-and-distribute-python-applications
 
 setup(
     name="audiobook-for-grandma",
-    version="0.1",
+    version="0.21",
 
     description='''A Raspberry Pi project for my blind grandmother, so that she can have an easy access to audiobooks online.''',
 
@@ -38,7 +38,11 @@ setup(
 
     install_requires=[
         'PyYAML==4.2b1',
-        'gTTS==2.2.1',
+        'internetarchive',
+        'pyttsx3',
+        'chardet',
+        'EbookLib',
+        'bs4',
       ],
 
 

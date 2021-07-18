@@ -50,8 +50,8 @@ class DB():
         )
         self.cursor.executemany("""
             INSERT INTO BOOK 
-            (IDENTIFIER,TITLE,CREATOR,DOWNLOADS,PUBLISHER,VOLUME,ENCODING,DOWNLOADED)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (IDENTIFIER,TITLE,CREATOR,DOWNLOADS,PUBLISHER,VOLUME,ENCODING,DOWNLOADED,HREF)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                                 [
                                     (
@@ -63,6 +63,7 @@ class DB():
                                         str(book.volume),
                                         None,
                                         bool(book.downloaded),
+                                        str(book.href),
                                     ) for book in books
                                 ]
                                 )
@@ -87,6 +88,11 @@ class DB():
         count = self.cursor.fetchone()
         return count is not None and count[0] > 100
 
+    def isBookListDownloadedForPublisher(self, publisher):
+        self.cursor.execute("SELECT COUNT(*) FROM BOOK WHERE PUBLISHER = ?", (publisher,))
+        count = self.cursor.fetchone()
+        return count is not None and count[0] > 100
+
     def updateEncoding(self, identifier: str, encoding: str) -> None:
         self.cursor.execute(
             "UPDATE BOOK SET ENCODING = ? WHERE IDENTIFIER = ?", (encoding, identifier))
@@ -99,7 +105,7 @@ class DB():
 
     def lastBook(self) -> Book:
         self.cursor.execute("""
-        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED
+        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED, book.HREF
         FROM CONTINUE_READING cr 
         JOIN BOOK book ON BOOK.IDENTIFIER = cr.IDENTIFIER
         """)
@@ -107,7 +113,7 @@ class DB():
 
     def listAllBooks(self) -> list:
         self.cursor.execute("""
-        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED
+        SELECT book.IDENTIFIER, book.TITLE, book.CREATOR, book.DOWNLOADS, book.PUBLISHER, book.VOLUME, book.ENCODING, book.DOWNLOADED, book.HREF
         FROM BOOK book
         """)
         return [Book(
@@ -119,6 +125,7 @@ class DB():
                 volume=result[5],
                 encoding=result[6],
                 downloaded=result[7],
+                href=result[8],
                 ) for result in self.cursor.fetchall()]
 
     def fetchBook(self) -> Book:
@@ -135,6 +142,7 @@ class DB():
                 volume=result[5],
                 encoding=result[6],
                 downloaded=result[7],
+                href=result[8],
             )
 
     def markDownloaded(self, book: Book) -> None:

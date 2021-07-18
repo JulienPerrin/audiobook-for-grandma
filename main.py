@@ -8,6 +8,8 @@ import sys
 from src import project_root
 from src.DB import DB
 from src.Library import Library
+from src.BookFinderGallica import BookFinderGallica
+from src.BookFinderGutenberg import BookFinderGutenberg
 from src.model.Book import Book
 
 VOLUME_CHANGE: float = 0.05
@@ -79,7 +81,8 @@ def offline(config_file, parsed_args):
         raise ValueError("Language is mandatory with value error")
     library = Library(configFile=config_file,
                       language=parsed_args.language, defaultRate=115, defaultVolume=0.5, voice='en1')
-    library.downloadBooksForAppToWorkOffline()
+    #library.downloadBooksForAppToWorkOffline(BookFinderGutenberg(library.db))
+    library.downloadBooksForAppToWorkOffline(BookFinderGallica(library.db))
     print("All books have been downloaded. ")
 
 
@@ -104,6 +107,7 @@ def execute_script(input_args):
 
     # download all books of a certain language
     if parsed_args.offline:
+        print("offline")
         offline(config_file, parsed_args)
 
     # increase/decrease volume

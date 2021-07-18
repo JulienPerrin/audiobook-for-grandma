@@ -9,5 +9,6 @@ audiobook_for_grandma.egg-info/
 */__pycache__/*
 *.pyc
 out/gutenberg/
+out/gallica/
 *.log
 *.db

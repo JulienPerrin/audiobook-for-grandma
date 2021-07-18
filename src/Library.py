@@ -4,6 +4,8 @@ import os
 import yaml
 
 from .BookFinder import BookFinder
+from .BookFinderGallica import BookFinderGallica
+from .BookFinderGutenberg import BookFinderGutenberg
 from .BookReader import BookReader
 from .DB import DB
 from .model import Book
@@ -19,7 +21,7 @@ class Library():
 
         self.config = self.load_config(configFile)
         self.db = DB()
-        self.finder = BookFinder(self.db)
+        self.finder = BookFinderGutenberg(self.db)
         test = self.config['test_language']
         self.reader = BookReader(
             db=self.db, languageTest=test[language], defaultRate=defaultRate, defaultVolume=defaultVolume, voice=voice)
@@ -34,10 +36,10 @@ class Library():
         if self.db.isContinueReading():
             self.run()
 
-    def downloadBooksForAppToWorkOffline(self) -> None:
+    def downloadBooksForAppToWorkOffline(self, finder: BookFinder) -> None:
         for book in self.db.listAllBooks():
-            if not book.downloaded:
-                self.finder.downloadBook(book)
+            if not book.downloaded and ((finder.publisher != 'Gallica_direct' and book.publisher != 'Gallica_direct') or (finder.publisher == 'Gallica_direct' and book.publisher == 'Gallica_direct')):
+                finder.downloadBook(book)
 
     @property
     def config(self):
