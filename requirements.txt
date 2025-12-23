@@ -1,7 +1,9 @@
-PyYAML==4.2b1
+PyYAML
 pytest
 internetarchive
 pyttsx3
 chardet
 EbookLib
 bs4
+setuptools
+build

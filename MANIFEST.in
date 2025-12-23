@@ -1,0 +1,2 @@
+include src/sql/*.sql
+include src/config.yaml

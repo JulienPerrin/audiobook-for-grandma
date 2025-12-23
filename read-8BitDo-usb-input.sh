@@ -4,9 +4,9 @@
 source ./config.sh
 
 stop_reader ()  {
-    pgrep audiobook | sudo xargs kill
-    pgrep mbrola | sudo xargs kill
-    pgrep aplay | sudo xargs kill
+    pgrep audiobook | sudo xargs kill 2> /dev/null
+    pgrep mbrola | sudo xargs kill 2> /dev/null
+    pgrep aplay | sudo xargs kill 2> /dev/null
     echo "reader stopped reading"
     audiobook-for-grandma --stop 
 }
@@ -90,96 +90,102 @@ button_unknow () {
 
 parse_8BitDo_USB_data () {
     if [ -e "$USB_8BITDO_FILE" ]; then
-        #echo "$USB_8BITDO_FILE exists."
-        usb_data=$(hexdump -e '8/2 "%04x " "\n"' -s 144 -n 16 "$USB_8BITDO_FILE")
-        #echo $usb_data
-
-        #press 'A'
-        #e238 1f2f 0000 0782 ea12 1f2f 0001 0101
-        regex='([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4}) ([[:alnum:]]{4})'
-        if [[ $usb_data =~ $regex ]]; then
-            action="${BASH_REMATCH[7]}"
-            button="${BASH_REMATCH[8]}"
-            #echo $action
-            #echo $button
-            case $action in
-                0001)
-                    #push
-                    case $button in
-                        0001)
-                            button_B;;
-                        0101)
-                            button_A;;
-                        0201)
-                            button_Y;;
-                        0301)
-                            button_X;;
-                        0401)
-                            button_L1;;
-                        0501)
-                            button_R1;;
-                        0701)
-                            button_START;;
-                        0601)
-                            button_SELECT;;
-                        0801)
-                            button_HOME
-                            ;;
-                        *)
-                            button_unknow "$action" "$button";;
-                    esac;;
-                7fff)
-                    case $button in
-                        0602)
-                            button_RIGHT;;
-                        0702)
-                            button_DOWN;;
-                        0202)
-                            button_L2;;
-                        0502)
-                            button_R2;;
-                        0002|0102|0302|0402)
-                            # joysticks
-                            ;;
-                        *)
-                            button_unknow "$action" "$button";;
-                    esac;;
-                8001)
-                    case $button in
-                        0202|0502)
-                            #pull L2 R2
-                            ;;
-                        0602)
-                            button_LEFT;;
-                        0702)
-                            button_UP;;
-                        0002|0102|0302|0402)
-                            # joysticks
-                            ;;
-                        *)
-                            button_unknow "$action" "$button";;
-                    esac;;
-                0000)
-                    #pull
-                    ;;
-                *) 
-                    case $button in
-                        0002|0102|0202|0302|0402)
-                            # joysticks
-                            ;;
-                        *)
-                            button_unknow "$action" "$button";;
-                    esac;;
-            esac
-        fi
-    else
+        echo "$USB_8BITDO_FILE exists."
+        (jstest --event "$USB_8BITDO_FILE" || true) | while read -r usb_data; do
+            read_usb_data "$usb_data"
+        done
+    #else
         #echo "The file $USB_8BITDO_FILE does not exists (device not connected). "
-        sleep 1
+    fi
+    sleep 1
+    parse_8BitDo_USB_data
+}
+
+read_usb_data () {
+    #press 'A'
+    #Event: type 1, time 19564951, number 1, value 1
+    regex='Event: type ([[:alnum:]]{1,20}), time ([[:alnum:]]{1,20}), number ([[:alnum:]]{1,20}), value (-?[[:alnum:]]{1,20})'
+    if [[ $1 =~ $regex ]]; then
+        action="${BASH_REMATCH[1]}"
+        button="${BASH_REMATCH[3]}"
+        value="${BASH_REMATCH[4]}"
+        echo "action : $action ; button : $button ; value : $value"
+        case "$action" in
+            1)
+                case "$value" in
+                    1) #press
+                        case "$button" in
+                            0)
+                                button_B;;
+                            1)
+                                button_A;;
+                            2)
+                                button_Y;;
+                            3)
+                                button_X;;
+                            4)
+                                button_L1;;
+                            5)
+                                button_R1;;
+                            6)
+                                button_SELECT;;
+                            7)
+                                button_START;;
+                            8)
+                                button_HOME
+                                ;;
+                            9|10)
+                                # press joysticks
+                                ;;
+                            *)
+                                button_unknow "$action" "$button";;
+                        esac;;
+                esac;;
+            2)
+                case $button in
+                    6)
+                        case $value in
+                            32767)
+                                button_RIGHT;;
+                            -32767)
+                                button_LEFT;;
+                        esac;;
+                    7)
+                        case $value in
+                            32767)
+                                button_DOWN;;
+                            -32767)
+                                button_UP;;
+                        esac;;
+                    0|1|3|4)
+                        # joysticks
+                        ;;
+                    2)
+                        case $value in
+                            32767) # press
+                                button_L2;;
+                        esac;;
+                    5)
+                        case $value in
+                            32767) # press
+                                button_R2;;
+                        esac;;
+                    *)
+                        button_unknow "$action" "$button";;
+                esac;;
+            0)
+                #pull
+                ;;
+            *) 
+                case $button in
+                    0002|0102|0202|0302|0402)
+                        # joysticks
+                        ;;
+                    *)
+                        button_unknow "$action" "$button";;
+                esac;;
+        esac
     fi
 }
 
-while true
-do
-    parse_8BitDo_USB_data
-done
-
+parse_8BitDo_USB_data

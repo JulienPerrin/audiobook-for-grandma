@@ -53,7 +53,7 @@ class Library():
 
         try:
             with open(config_file, 'r') as stream:
-                config = yaml.load(stream)
+                config = yaml.load(stream, Loader=yaml.FullLoader)
 
         except yaml.YAMLError as e:
             print("Could not load configuration file. Error: {}".format(e))

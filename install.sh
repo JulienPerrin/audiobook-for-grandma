@@ -2,30 +2,27 @@
 
 sudo apt update
 
-sudo apt install make
+sudo apt install python3 python3-venv -y
+sudo apt install espeak ffmpeg libespeak1 joystick -y
 
-# install espeak (TTS reader)
-sudo apt install espeak -y
+sudo apt install python3 python3-venv -y
+
 # add MBrola voice to espeak
-cd ~/Downloads/ || exit
-wget https://raspberry-pi.fr/download/espeak/mbrola3.0.1h_armhf.deb -O mbrola.deb
+#cd ~/Downloads/ || exit
+#wget https://raspberry-pi.fr/download/espeak/mbrola3.0.1h_armhf.deb -O mbrola.deb
 # install the voice that you like
 sudo apt install mbrola-fr4 -y
 
-# use python3 as default
-sudo apt install python3 -y
-
 # install python dependancies
-pip install wheel setuptools
-sudo -H pip install virtualenv
+python3 -m venv venv
+# shellcheck source=/dev/null
+source venv/bin/activate
 
-#install project audiobook-for-grandma
-cd || exit
-git clone https://github.com/JulienPerrin/audiobook-for-grandma
-cd audiobook-for-grandma || exit
-virtualenv venv
-easy_install PyYAML
-/home/pi/audiobook-for-grandma/venv/bin/python -m pip install --upgrade pip
+pip install -r requirements.txt
+python -m build
+pip install dist/audiobook_for_grandma-0.21.tar.gz
+
+#launch audiobook-for-grandma at startup
 sudo cp afg.service /lib/systemd/system/afg.service
 sudo chmod 644 /lib/systemd/system/afg.service
 sudo systemctl daemon-reload

@@ -1,8 +1,12 @@
 #!/bin/bash
 
-cd /home/pi/audiobook-for-grandma || exit
-# shellcheck disable=SC1091
+# shellcheck source=/dev/null
 source venv/bin/activate
-make develop > log/make.log
+
+pip install -r requirements.txt
+python -m build
+#pip install -e
+pip install dist/audiobook_for_grandma-0.21.tar.gz
+
 ./read-8BitDo-usb-input.sh >> log/8BitDo.log;
 echo "App has been launched"
