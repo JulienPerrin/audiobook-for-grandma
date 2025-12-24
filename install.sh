@@ -11,7 +11,7 @@ sudo apt install python3 python3-venv -y
 #cd ~/Downloads/ || exit
 #wget https://raspberry-pi.fr/download/espeak/mbrola3.0.1h_armhf.deb -O mbrola.deb
 # install the voice that you like
-sudo apt install mbrola-fr4 -y
+sudo apt install mbrola mbrola-fr1 mbrola-fr4 -y
 
 # install python dependancies
 python3 -m venv venv
