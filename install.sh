@@ -3,14 +3,12 @@
 sudo apt update
 
 sudo apt install python3 python3-venv -y
-sudo apt install espeak ffmpeg libespeak1 joystick -y
+sudo apt install espeak espeak-ng alsa-utils ffmpeg libespeak1 joystick -y
 
 sudo apt install python3 python3-venv -y
 
-# add MBrola voice to espeak
-#cd ~/Downloads/ || exit
-#wget https://raspberry-pi.fr/download/espeak/mbrola3.0.1h_armhf.deb -O mbrola.deb
 # install the voice that you like
+# add MBrola voice to espeak
 sudo apt install mbrola mbrola-fr1 mbrola-fr4 -y
 
 # install python dependancies
